@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="/fragments/head :: head"></head>
+    <body style="background-color: rgb(22, 30, 84)">
+        <header class="header container">
+           
+                <nav th:replace="/fragments/navbar :: nav"></nav>  
+           
+        </header> 
+        <br>
+        <div class="container-lg">
+            <h1
+                class="display-4"
+                style="
+                background-color: rgb(22, 30, 84);
+                color: rgb(235, 230, 69);
+                font-family: 'Urbanist', sans-serif;
+                "
+                >
+                Queremos acompañarte porque sabemos de dificil que es encontrar
+                profesionales de confianza.
+               
+                
+            </h1>
+        </div>
+        <br>
+        <section>
+            <div class="container-lg">
+                <img
+                    class="img-fluid"
+                    src="https://srideveloprs.files.wordpress.com/2015/03/banner-home-conveyancing.jpg"
+                    alt="Herramientas"
+                    />
+            </div>
+        </section>
+        <br>
+
+        <section class="container-lg">
+            <div class="container-lg">
+            <p
+                class="display-4"
+                style="
+                background-color: rgb(22, 30, 84);
+                color: rgb(235, 230, 69);
+                font-family: 'Urbanist', sans-serif;
+                "
+                >
+                Por eso creamos esta app para que puedas encontrar confianza
+                y profesionales a tu disposición.
+            </p>
+        </div>
+        </section>
+        <br>
+        
+        <section>
+            <div class="container-lg">
+                <img
+                    class="img-fluid"
+                    src="https://4.imimg.com/data4/SE/EK/MY-20762261/electrical-plumbing-services.jpg"
+                    alt="Herramientas"
+                    />
+            </div>
+        </section>
+        <br>
+       
+        <footer class="footer container">
+            <div>
+                <nav th:replace="/fragments/footer :: footer"></nav>  
+            </div> 
+        </footer>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>

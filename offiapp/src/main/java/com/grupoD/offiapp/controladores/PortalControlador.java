@@ -1,15 +1,12 @@
 package com.grupoD.offiapp.controladores;
 
-import com.grupoD.offiapp.enumeraciones.Rol;
-import com.grupoD.offiapp.excepciones.MiException;
 
+import com.grupoD.offiapp.excepciones.MiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,6 +59,36 @@ public class PortalControlador {
     public String Logueado() {
 
         return "usuariolog.html";
+    }
+    
+    @GetMapping("/conocenos")
+    public String conocenos(){
+        return "about_us.html";
+    }
+    
+    @GetMapping("/registroProveedor")
+    public String RegistroProveedor() {
+        return "registro_proveedor.html";
+    }
+
+    @PostMapping("/registrarProveedor")
+
+    public String RegistrarProveedor(@RequestParam String nombreProv, 
+            @RequestParam String email,@RequestParam String direccion,
+            @RequestParam String password, @RequestParam String password2, @RequestParam Integer telefono, @RequestParam String servicio,
+            @RequestParam Integer precioHora, @RequestParam(required = false) String descripcion, ModelMap modelo) {
+
+        try {
+            usuarioServicio.registrar(nombreProv, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+            modelo.put("exito", "Usted se ha registrado correctamente como Proveedor");
+            return "index.html";
+        } catch (MiException ex) {
+
+            // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            modelo.put("error", ex.getMessage());
+
+            return "registro_proveedor.html";
+        }
     }
 
     /*
