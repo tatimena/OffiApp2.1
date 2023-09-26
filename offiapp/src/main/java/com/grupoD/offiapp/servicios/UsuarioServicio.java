@@ -1,5 +1,7 @@
 package com.grupoD.offiapp.servicios;
 
+import com.grupoD.offiapp.Entidades.Imagen;
+import com.grupoD.offiapp.Entidades.Trabajo;
 import com.grupoD.offiapp.Entidades.Usuario;
 import com.grupoD.offiapp.enumeraciones.Rol;
 import com.grupoD.offiapp.excepciones.MiException;
@@ -17,17 +19,38 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UsuarioServicio implements UserDetailsService {
+    
 
     @Autowired
-    private UsuarioRepositorio usuarioRepositorio;
+    private UsuarioRepositorio usuarioRepositorio; 
+
+    public Usuario getOne(String id) {
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
+        
+        if (usuarioOptional.isPresent()) {
+            return usuarioOptional.get();
+        } else {
+            throw new EntityNotFoundException("Usuario no encontrado con ID: " + id);
+        }
+    }
+
+
+
+   
+
+   
+    @Autowired
+    private ImagenServicio imagenServicio;
 
 //asi tiene que estar en el thymelife
     @Transactional
-    public void registrar(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+    public void registrar(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
 
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
@@ -38,6 +61,9 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setServicio(servicio);
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
+        Imagen imagen = imagenServicio.guardar(archivo);
+            
+        usuario.setImagen(imagen);
 
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
@@ -102,14 +128,14 @@ public class UsuarioServicio implements UserDetailsService {
     }
 */
     @Transactional
-    public void modificarUsuario(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+    public void modificarUsuario(MultipartFile archivo,String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
-        Usuario respuesta = usuarioRepositorio.buscarPorEmail(email);
-        Usuario usuario = new Usuario();
-        if (respuesta.isPresent()) {
+        Usuario usuario = usuarioRepositorio.buscarPorEmail(email);
+        
+        if (usuario != null) {
 
-            usuario = respuesta.get();
+            
             usuario.setNombreUser(nombreUser);
             usuario.setDireccion(direccion);
             usuario.setEmail(email);
@@ -118,9 +144,15 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setServicio(servicio);
             usuario.setPrecioHora(precioHora);
             usuario.setDescripcion(descripcion);
+              Imagen imagen = imagenServicio.guardar(archivo);
+            
+        usuario.setImagen(imagen);
 
             usuarioRepositorio.save(usuario);
 
+        }else{
+             throw new MiException("no se encotro el usuario");
+        
         }
     }
 
@@ -154,6 +186,14 @@ public class UsuarioServicio implements UserDetailsService {
         }
 
     }
+    
+    
+    
+    public Usuario obtenerUsuarioPorId(String id) {
+        
+        
+    return usuarioRepositorio.findById(id).orElse(null);
+}
 
     @Transactional
     public void eliminarUsuario(String id) throws MiException {
@@ -179,5 +219,24 @@ public class UsuarioServicio implements UserDetailsService {
 
         return proveedores;
     }
+    
+    
+    @Transactional
+public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
+    if (trabajo.getUsuarioSolicitante() != null) {
+        Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante().getId()); // Corregido aquí
+        if (solicitante != null) {
+            trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+        }
+    }
+    if (trabajo.getProveedorAsignado() != null) {
+        Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
+        if (proveedor != null) {
+            trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
+        }
+    }
+}
+
+
 
 }

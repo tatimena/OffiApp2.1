@@ -5,25 +5,17 @@
  */
 package com.grupoD.offiapp.Entidades;
 
-import com.grupoD.offiapp.enumeraciones.Rol;      // va en minuscula px la carpeta esta en minuscula 
-///import java.util.Date;
+import com.grupoD.offiapp.enumeraciones.Rol;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-///import javax.persistence.Temporal;
-///import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
-//import javax.persistence.OneToMany;
 
-/**
- *
- * @author pulaf
- */
+
 @Entity
 @Table(name = "Usuario")
 public class Usuario {
@@ -42,11 +34,13 @@ public class Usuario {
     private String descripcion;
     @Enumerated(EnumType.STRING)
     protected Rol rol;
+    @OneToOne
+     private Imagen imagen;
 
     public Usuario() {
     }
 
-    public Usuario(String id, String nombreUser, String direccion, String email, String contrasenia, Integer telefono, String servicio, Integer precioHora, String descripcion, Rol rol) {
+    public Usuario(String id, String nombreUser, String direccion, String email, String contrasenia, Integer telefono, String servicio, Integer precioHora, String descripcion, Rol rol, Imagen imagen) {
         this.id = id;
         this.nombreUser = nombreUser;
         this.direccion = direccion;
@@ -57,6 +51,7 @@ public class Usuario {
         this.precioHora = precioHora;
         this.descripcion = descripcion;
         this.rol = rol;
+        this.imagen = imagen;
     }
 
     public String getId() {
@@ -139,15 +134,12 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public boolean isPresent() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Imagen getImagen() {
+        return imagen;
     }
 
-    public Usuario get() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setImagen(Imagen imagen) {
+        this.imagen = imagen;
     }
 
-    
-    
-    
 }

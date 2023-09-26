@@ -30,7 +30,7 @@
             </h2>
         </div>
 
-            <form th:action="@{/registrar}" method="POST"> 
+            <form th:action="@{/registrar}" method="POST" enctype="multipart/form-data"> 
                 <div
                     th:if="${error != null}"
                     class="alert alert-danger d-flex align-items-center"
@@ -151,6 +151,9 @@
                     </div>
                     
                     <br>
+                    <div> <label for="archivo" class="form-label">Imagen de perfil</label></div>
+                     <input name="archivo" type="file" id="archivo">
+                    </div>
                    
                     <div class="registrar">
                         <button class="btn btn-primary link volverr" type="submit">REGISTRARME</button>  
