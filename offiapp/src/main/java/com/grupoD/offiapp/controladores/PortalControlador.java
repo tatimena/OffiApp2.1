@@ -30,17 +30,17 @@ public class PortalControlador {
     }
 
     @GetMapping("/registro")
-    public String Registro() {
+    public String RegistroUs() {
 
         return "registro_usuario.html";
     }
 
     
-    @PostMapping("/registrar")
-    public String Registrar(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+    @PostMapping("/registrarUs")
+    public String registrarUs(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, ModelMap modelo) throws MiException {
 
         try {
-            usuarioServicio.registrar(archivo,nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+            usuarioServicio.registrarUs(archivo,nombreUser, direccion, email, password, password2, telefono, servicio);
             modelo.put("exito", "Usted se ha registrado correctamente");
             return "index.html";
         } catch (MiException ex) {
@@ -53,7 +53,27 @@ public class PortalControlador {
 
     }
 
+    @GetMapping("/registroProveedor")
+    public String RegistroProveedor() {
+        return "registro_proveedor.html";
+    }
     
+    @PostMapping("/registrarProv")
+    public String RegistrarProv(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+
+        try {
+            usuarioServicio.registrarProv(archivo,nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
+            modelo.put("exito", "Usted se ha registrado correctamente");
+            return "index.html";
+        } catch (MiException ex) {
+
+            // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            modelo.put("error", ex.getMessage());
+
+            return "registro_proveedor.html";
+        }
+
+    }
 
     @GetMapping("/login")
     public String login(@RequestParam(required = false) String error, ModelMap modelo) {
@@ -74,31 +94,10 @@ public class PortalControlador {
         return "about_us.html";
     }
     
-    @GetMapping("/registroProveedor")
-    public String RegistroProveedor() {
-        return "registro_proveedor.html";
-    }
-
-    @PostMapping("/registrarProveedor")
-
-    public String RegistrarProveedor(@RequestParam MultipartFile archivo, @RequestParam String nombreProv, 
-            @RequestParam String email,@RequestParam String direccion,
-            @RequestParam String password, @RequestParam String password2, @RequestParam Integer telefono, @RequestParam String servicio,
-            @RequestParam Integer precioHora, @RequestParam(required = false) String descripcion, ModelMap modelo) {
-
-        try {
-            usuarioServicio.registrar(archivo, nombreProv, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
-            modelo.put("exito", "Usted se ha registrado correctamente como Proveedor");
-            return "index.html";
-        } catch (MiException ex) {
-
-            // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
-            modelo.put("error", ex.getMessage());
-
-            return "registro_proveedor.html";
-        }
-    }
-     @GetMapping("/perfilProveedor")
+    
+    /*
+    
+      @GetMapping("/perfilProveedor")
     public String mostrarPerfilProveedor(Model model) {
         // Aquí puedes agregar lógica para obtener los datos del proveedor
         // y pasarlos al modelo para que se muestren en la vista
@@ -141,3 +140,4 @@ public class PortalControlador {
     }
 */
 
+}
