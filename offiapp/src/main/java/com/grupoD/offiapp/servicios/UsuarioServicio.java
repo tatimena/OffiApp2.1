@@ -21,18 +21,18 @@ import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UsuarioServicio implements UserDetailsService {
-    
 
     @Autowired
-    private UsuarioRepositorio usuarioRepositorio; 
+    private UsuarioRepositorio usuarioRepositorio;
 
     public Usuario getOne(String id) {
         Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
-        
+
         if (usuarioOptional.isPresent()) {
             return usuarioOptional.get();
         } else {
@@ -40,35 +40,28 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
 
-
-
-   
-
-   
     @Autowired
     private ImagenServicio imagenServicio;
 
 //asi tiene que estar en el thymelife
     @Transactional
-    public void registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
-
+    public void registrarUs(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
+        /* MultipartFile archivo */
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
         usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
-      
-        Imagen imagen = imagenServicio.guardar(archivo);
-            
-        usuario.setImagen(imagen);
 
+        //Imagen imagen = imagenServicio.guardar(archivo);
+        // usuario.setImagen(imagen);
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (nombreUser.equals("Admin")) {
             usuario.setRol(Rol.ADMIN);  // email.equals("proveedor" + usuario.getNombreUser() + "@gmail.com"
-       // } else if (servicio.isEmpty()) {
-         //   usuario.setRol(Rol.USER);
+            // } else if (servicio.isEmpty()) {
+            //   usuario.setRol(Rol.USER);
         } else {
             usuario.setRol(Rol.USER);
         }
@@ -110,20 +103,19 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
     @Transactional
-    public void registrarProv(MultipartFile archivo, String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-
-       
+    public void registrarProv(String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+        /* MultipartFile archivo, */
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
-       
+
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
         usuario.setServicio(servicio);
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
-        Imagen imagen = imagenServicio.guardar(archivo);
-            
-        usuario.setImagen(imagen);
+        /*  Imagen imagen = imagenServicio.guardar(archivo);
+
+        usuario.setImagen(imagen); */
 
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
@@ -135,7 +127,8 @@ public class UsuarioServicio implements UserDetailsService {
         usuarioRepositorio.save(usuario);
 
     }
-/*
+
+    /*
     public void validar(Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
         if (telefono == null) {
             throw new MiException("Completar con el número de teléfono");
@@ -150,16 +143,16 @@ public class UsuarioServicio implements UserDetailsService {
             throw new MiException("La descripción no puede estar vacía");
         }
     }
-*/
+     */
     @Transactional
-    public void modificarUsuario(MultipartFile archivo,String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+    public void modificarUsuario(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+        /* MultipartFile archivo,  */
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
         Usuario usuario = usuarioRepositorio.buscarPorEmail(email);
-        
+
         if (usuario != null) {
 
-            
             usuario.setNombreUser(nombreUser);
             usuario.setDireccion(direccion);
             usuario.setEmail(email);
@@ -168,15 +161,15 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setServicio(servicio);
             usuario.setPrecioHora(precioHora);
             usuario.setDescripcion(descripcion);
-              Imagen imagen = imagenServicio.guardar(archivo);
-            
-        usuario.setImagen(imagen);
+            /*  Imagen imagen = imagenServicio.guardar(archivo);
+
+            usuario.setImagen(imagen); */
 
             usuarioRepositorio.save(usuario);
 
-        }else{
-             throw new MiException("no se encotro el usuario");
-        
+        } else {
+            throw new MiException("no se encotro el usuario");
+
         }
     }
 
@@ -210,14 +203,11 @@ public class UsuarioServicio implements UserDetailsService {
         }
 
     }
-    
-    
-    
+
     public Usuario obtenerUsuarioPorId(String id) {
-        
-        
-    return usuarioRepositorio.findById(id).orElse(null);
-}
+
+        return usuarioRepositorio.findById(id).orElse(null);
+    }
 
     @Transactional
     public void eliminarUsuario(String id) throws MiException {
@@ -230,7 +220,7 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
 
-    public List<Usuario> listarProveedores() {
+    /*   public List<Usuario> listarProveedores() {
         List<Usuario> usuarios = usuarioRepositorio.findAll();
         List<Usuario> proveedores = new ArrayList<>();
 
@@ -243,24 +233,30 @@ public class UsuarioServicio implements UserDetailsService {
 
         return proveedores;
     }
-    
-    
+     */
+    public List<Usuario> listarUsuarios() {
+
+        List<Usuario> usuarios = usuarioRepositorio.findAll();
+       
+        return usuarios;
+    }
+   
+   
+
     @Transactional
-public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
-    if (trabajo.getUsuarioSolicitante() != null) {
-        Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante().getId()); // Corregido aquí
-        if (solicitante != null) {
-            trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+    public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
+        if (trabajo.getUsuarioSolicitante() != null) {
+            Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante().getId()); // Corregido aquí
+            if (solicitante != null) {
+                trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+            }
+        }
+        if (trabajo.getProveedorAsignado() != null) {
+            Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
+            if (proveedor != null) {
+                trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
+            }
         }
     }
-    if (trabajo.getProveedorAsignado() != null) {
-        Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
-        if (proveedor != null) {
-            trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
-        }
-    }
-}
-
-
 
 }
