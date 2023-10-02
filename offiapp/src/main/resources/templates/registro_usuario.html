@@ -8,24 +8,25 @@
           ">
 
         <header class="header container">
-          
-                <nav th:replace="/fragments/navbar :: nav"></nav>  
-           
+
+            <nav th:replace="/fragments/navbar :: nav"></nav>  
+
         </header>  
+
         <section id="main-section">    
             <div class="container-lg">
-            <h2
-                class="display-1"
-                style="
-                
-                color: rgb(251, 146, 36);
-                font-family: 'Urbanist', sans-serif;
-                "
-                >
-                Registrate y accede a <br />
-                TODOS los proveedores
-            </h2>
-        </div>
+                <h2
+                    class="display-1"
+                    style="
+
+                    color: rgb(251, 146, 36);
+                    font-family: 'Urbanist', sans-serif;
+                    "
+                    >
+                    Registrate y accede a <br />
+                    TODOS los proveedores
+                </h2>
+            </div>
             <form th:action="@{/registrar}" 
                   method="POST" 
                   enctype="multipart/form-data"
@@ -66,23 +67,23 @@
                                 name="nombreUser"
                                 th:value="${nombre}"
                                 />
-                        </div>
-                    </div>
-                    <br>
-                    <div class="mt-3">
-                        <div><label for="direccion" class="form-label" >Direccion</label></div>
 
-                        <div class="encabezado">
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="direccion"
-                                name="direccion"
-                                th:value="${direccion}"
-                                />
                         </div>
                     </div>
-                   
+
+                    <div
+                        th:if="${exito != null}"
+                        class="alert alert-success d-flex align-items-center"
+                        role="alert"
+                        >
+                        <div class="content">
+                            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:">
+                            <use xlink:href="#check-circle-fill" />
+                            </svg>
+                        </div>
+                    </div>
+
+
                     <div class="mt-3">
                         <div><label for="correo" class="form-label" >Direccion de correo electronico</label></div>
                         <div class="encabezado">
@@ -132,19 +133,75 @@
                                 name="telefono"
                                 th:value="${telefono}"
                                 />
+
                         </div>
+
+                        <br>
+
+                        <div class="mt-3">
+                            <div><label for="password" class="form-label">Contraseña</label></div>
+                            <div class="encabezado">
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    name="password"
+                                    th:value="${password}"
+                                    />
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="mt-3">
+                            <div><label for="password2" class="form-label">Confirmar contraseña</label></div>
+                            <div class="encabezado">
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password2"
+                                    name="password2"
+                                    th:value="${password2}"
+                                    />
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="mt-3">
+                            <div><label for="telefono" class="form-label" >Telefono</label></div>
+
+
+                            <div class="encabezado">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="telefono"
+                                    name="telefono"
+                                    th:value="${telefono}"
+                                    />
+                            </div>
+                        </div>
+
+                        <br>
+                        <div> <label for="archivo" class="form-label">Imagen de perfil</label></div>
+                        <input name="archivo" type="file" id="archivo">
                     </div>
                     <br>
+
                     <div> <label for="archivo" class="form-label">Imagen de perfil</label></div>
-                     <input name="archivo" type="file" id="archivo">
-                    </div>
-                    <br>
-                    <div class="registrar">
-                        <button class="btn btn-primary align-items-center" type="submit">REGISTRARME</button>   
-                    </div>
-                
+                    <input name="archivo" type="file" id="archivo">
+                </div>
+                <br>
+
+                <div class="registrar">
+                    <button class="btn btn-primary align-items-center" type="submit">REGISTRARME</button>   
+                </div>
+
+
                 </div>
             </form>
+
 
         </section>
         <br>
@@ -157,7 +214,7 @@
                     />
             </div>
         </section>
-        
+
         <footer class="footer container">
             <div>
                 <nav th:replace="/fragments/footer :: footer"></nav>  

@@ -30,7 +30,7 @@ public class PortalControlador {
     }
 
     @GetMapping("/registro")
-    public String Registro() {
+    public String RegistroUs() {
 
         return "registro_usuario.html";
     }
@@ -39,8 +39,8 @@ public class PortalControlador {
     public String Registrar(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
 
         try {
-            usuarioServicio.registrar(archivo, nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
-            modelo.put("exito", "Usted se ha registrado correctamente");
+            usuarioServicio.registrarUs(archivo, nombreUser, direccion, email, password, password2, telefono, servicio);
+
             return "index.html";
         } catch (MiException ex) {
 
@@ -77,14 +77,13 @@ public class PortalControlador {
     }
 
     @PostMapping("/registrarProveedor")
-
     public String RegistrarProveedor(@RequestParam MultipartFile archivo, @RequestParam String nombreProv,
             @RequestParam String email, @RequestParam String direccion,
             @RequestParam String password, @RequestParam String password2, @RequestParam Integer telefono, @RequestParam String servicio,
             @RequestParam Integer precioHora, @RequestParam(required = false) String descripcion, ModelMap modelo) {
 
         try {
-            usuarioServicio.registrar(archivo, nombreProv, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+            usuarioServicio.registrarProv(archivo, nombreProv, email, password, password2, telefono, servicio, precioHora, descripcion);
             modelo.put("exito", "Usted se ha registrado correctamente como Proveedor");
             return "index.html";
         } catch (MiException ex) {
@@ -95,6 +94,7 @@ public class PortalControlador {
             return "registro_proveedor.html";
         }
     }
+}
 //     @GetMapping("/perfilProveedor")
 //    public String mostrarPerfilProveedor(Model model) {
 //        // Aquí puedes agregar lógica para obtener los datos del proveedor
@@ -106,7 +106,10 @@ public class PortalControlador {
 //        return "vistaPerfil.html"; // Este es el nombre de la vista HTML (perfilProveedor.html)
 //    }
 
-    @GetMapping("/perfilProveedor")
+/*
+    
+      @GetMapping("/perfilProveedor")
+>>>>>>> 462a2debd6a21f5643eab97a05134d0c9bc611b9
     public String mostrarPerfilProveedor(Model model) {
         // Aquí puedes agregar lógica para obtener los datos del proveedor
         // y pasarlos al modelo para que se muestren en la vista
@@ -147,4 +150,5 @@ public class PortalControlador {
         }
 
     }
+
  */
