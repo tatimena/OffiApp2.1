@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.grupoD.offiapp.controladores;
 import com.grupoD.offiapp.Entidades.Usuario;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
@@ -35,6 +39,3 @@ public class ImagenControlador {
     }
     
 }
-
-    
-

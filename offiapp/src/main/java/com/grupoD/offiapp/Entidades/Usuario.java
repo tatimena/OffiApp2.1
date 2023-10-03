@@ -37,7 +37,7 @@ public class Usuario {
     
     
     @OneToOne
-     private Imagen imagen;
+    private Imagen imagen;
 
     public Usuario() {
     }
