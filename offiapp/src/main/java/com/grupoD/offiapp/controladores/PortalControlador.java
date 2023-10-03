@@ -47,11 +47,11 @@ public class PortalControlador {
 
 
     @PostMapping("/registrarUs")
-    public String registrarUs(@RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, ModelMap modelo) throws MiException {
-        /* @RequestParam MultipartFile archivo,  */
+    public String registrarUs(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, ModelMap modelo) throws MiException {
+      
         try {
-            usuarioServicio.registrarUs(nombreUser, direccion, email, password, password2, telefono, servicio);
-            // archivo,
+            usuarioServicio.registrarUs(archivo, nombreUser, direccion, email, password, password2, telefono, servicio);
+            
             modelo.put("exito", "Usted se ha registrado correctamente");
 
             return "index.html";
@@ -72,11 +72,11 @@ public class PortalControlador {
     }
 
     @PostMapping("/registrarProv")
-    public String RegistrarProv(@RequestParam String nombreUser, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
-// @RequestParam MultipartFile archivo,
+    public String RegistrarProv(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+
         try {
-            usuarioServicio.registrarProv(nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
-            // archivo,
+            usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
+          
             modelo.put("exito", "Usted se ha registrado correctamente");
             return "index.html";
         } catch (MiException ex) {

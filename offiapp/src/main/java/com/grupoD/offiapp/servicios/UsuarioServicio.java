@@ -45,8 +45,8 @@ public class UsuarioServicio implements UserDetailsService {
 
 //asi tiene que estar en el thymelife
     @Transactional
-    public void registrarUs(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
-        /* MultipartFile archivo */
+    public void registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
+        
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
@@ -54,14 +54,12 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
 
-        //Imagen imagen = imagenServicio.guardar(archivo);
-        // usuario.setImagen(imagen);
+        Imagen imagen = imagenServicio.guardar(archivo);
+        usuario.setImagen(imagen);
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (nombreUser.equals("Admin")) {
-            usuario.setRol(Rol.ADMIN);  // email.equals("proveedor" + usuario.getNombreUser() + "@gmail.com"
-            // } else if (servicio.isEmpty()) {
-            //   usuario.setRol(Rol.USER);
+            usuario.setRol(Rol.ADMIN);  
         } else {
             usuario.setRol(Rol.USER);
         }
@@ -103,8 +101,8 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
     @Transactional
-    public void registrarProv(String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        /* MultipartFile archivo, */
+    public void registrarProv(MultipartFile archivo,String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+         
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
 
@@ -113,10 +111,9 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setServicio(servicio);
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
-        /*  Imagen imagen = imagenServicio.guardar(archivo);
+        Imagen imagen = imagenServicio.guardar(archivo);
 
-        usuario.setImagen(imagen); */
-
+        usuario.setImagen(imagen); 
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (servicio.isEmpty()) {
@@ -145,8 +142,8 @@ public class UsuarioServicio implements UserDetailsService {
     }
      */
     @Transactional
-    public void modificarUsuario(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        /* MultipartFile archivo,  */
+    public void modificarUsuario(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+        
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
         Usuario usuario = usuarioRepositorio.buscarPorEmail(email);
@@ -161,9 +158,9 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setServicio(servicio);
             usuario.setPrecioHora(precioHora);
             usuario.setDescripcion(descripcion);
-            /*  Imagen imagen = imagenServicio.guardar(archivo);
+            Imagen imagen = imagenServicio.guardar(archivo);
 
-            usuario.setImagen(imagen); */
+            usuario.setImagen(imagen);
 
             usuarioRepositorio.save(usuario);
 

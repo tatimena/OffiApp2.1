@@ -25,7 +25,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <th scope="col">Email</th>
                         <th scope="col">Servicio</th>
                         <th scope="col">Precio por hora</th>
-
+                        <th scope="col">Contactar</th>
                     </tr>
                 </thead> 
                 <tbody th:each="usuario : ${usuarios}">
@@ -33,8 +33,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <td scope="row" th:text="${usuario.nombreUser}"></td> 
                         <td th:text="${usuario.email}"></td>
                         <td th:text="${usuario.servicio}"></td>  
-                        <td th:text="${usuario.precioHora}"></td>  
-                    </tr>  
+                        <td th:text="${usuario.precioHora}"></td>
+                <td  <div class="col-md-3">
+                    <a th:href="@{/electricistas}" class="btn btn-secondary">
+                        Ir a perfil
+                    </a>
+                    </div> </td>
+                </tr>  
 
                 </tbody>
             </table>            
