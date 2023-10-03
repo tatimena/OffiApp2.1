@@ -17,5 +17,5 @@ import org.springframework.data.repository.query.Param;
 public interface TrabajoRepositorio extends JpaRepository<Trabajo, String> {
    
     @Query("SELECT t FROM Trabajo t WHERE t.id = :id")
-    public Trabajo buscarPorid(@Param("id") String id);
+    public Trabajo buscarPorid(@Param("id") String trabajoId);
 }

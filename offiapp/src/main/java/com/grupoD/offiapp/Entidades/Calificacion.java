@@ -22,47 +22,42 @@ public class Calificacion {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
-    private int calificacion;
-    private double valorCalificacion;
+    private String calificacionId;
+    private int calificar;
+    
     private String comentario;
+    private String trabajoId;
     @ManyToOne
     private Usuario usuario;
+    
+   
 
 
     public Calificacion() {
     }
 
-    public Calificacion(String id, int calificacion, double valorCalificacion, String comentario, Usuario usuario) {
-        this.id = id;
-        this.calificacion = calificacion;
-        this.valorCalificacion = valorCalificacion;
+    public Calificacion(String calificacionId, int calificar, String comentario, String trabajoId, Usuario usuario) {
+        this.calificacionId = calificacionId;
+        this.calificar = calificar;
         this.comentario = comentario;
+        this.trabajoId = trabajoId;
         this.usuario = usuario;
     }
 
-    public String getId() {
-        return id;
+    public String getCalificacionId() {
+        return calificacionId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCalificacionId(String calificacionId) {
+        this.calificacionId = calificacionId;
     }
 
-    public int getCalificacion() {
-        return calificacion;
+    public int getCalificar() {
+        return calificar;
     }
 
-    public void setCalificacion(int calificacion) {
-        this.calificacion = calificacion;
-    }
-
-    public double getValorCalificacion() {
-        return valorCalificacion;
-    }
-
-    public void setValorCalificacion(double valorCalificacion) {
-        this.valorCalificacion = valorCalificacion;
+    public void setCalificar(int calificar) {
+        this.calificar = calificar;
     }
 
     public String getComentario() {
@@ -71,6 +66,14 @@ public class Calificacion {
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
+    }
+
+    public String getTrabajoId() {
+        return trabajoId;
+    }
+
+    public void setTrabajoId(String trabajoId) {
+        this.trabajoId = trabajoId;
     }
 
     public Usuario getUsuario() {

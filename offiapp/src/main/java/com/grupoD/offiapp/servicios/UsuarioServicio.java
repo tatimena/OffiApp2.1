@@ -109,6 +109,8 @@ public class UsuarioServicio implements UserDetailsService {
 
     }
 
+
+            
     @Transactional
     public void registrarProv(MultipartFile archivo, String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
 
@@ -151,6 +153,7 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
 */
+
     @Transactional
     public void modificarUsuario(MultipartFile archivo,String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
@@ -236,7 +239,7 @@ public class UsuarioServicio implements UserDetailsService {
 
         for (Usuario usuario : usuarios) {
             if (usuario.getServicio() != null) {
-                // El usuario tiene el atributo "servicio" cargado, lo consideramos un proveedor
+             
                 proveedores.add(usuario);
             }
         }
@@ -245,21 +248,21 @@ public class UsuarioServicio implements UserDetailsService {
     }
     
     
-    @Transactional
-public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
-    if (trabajo.getUsuarioSolicitante() != null) {
-        Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante().getId()); // Corregido aquí
-        if (solicitante != null) {
-            trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
-        }
-    }
-    if (trabajo.getProveedorAsignado() != null) {
-        Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
-        if (proveedor != null) {
-            trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
-        }
-    }
-}
+    //@Transactional
+//public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
+    //if (trabajo.getUsuarioSolicitante_id() != null) {
+     //   Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante_id().getId()); // Corregido aquí
+       // if (solicitante != null) {
+       //     trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+       // }
+   // }
+    //if (trabajo.getProveedorAsignado() != null) {
+       // Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
+       // if (proveedor != null) {
+       //     trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
+        //}
+   // }
+//}
 
 
 
