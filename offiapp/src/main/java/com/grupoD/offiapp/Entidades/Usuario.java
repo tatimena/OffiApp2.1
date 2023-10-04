@@ -35,7 +35,7 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     protected Rol rol;
     @OneToOne
-     private Imagen imagen;
+    private Imagen imagen;
 
     public Usuario() {
     }
