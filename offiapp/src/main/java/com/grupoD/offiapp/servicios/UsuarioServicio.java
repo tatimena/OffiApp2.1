@@ -20,7 +20,10 @@ import org.springframework.stereotype.Service;
 import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -102,6 +105,11 @@ public class UsuarioServicio implements UserDetailsService {
         if (usuario != null) {
             List<GrantedAuthority> permisos = new ArrayList();
             GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
+           ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            
+            HttpSession session = attr.getRequest().getSession(true);
+            
+            session.setAttribute("usuariosession", usuario);
             permisos.add(p);
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
 

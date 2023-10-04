@@ -2,6 +2,7 @@ package com.grupoD.offiapp.controladores;
 
 
 import com.grupoD.offiapp.Entidades.Calificacion;
+import com.grupoD.offiapp.Entidades.Usuario;
 import com.grupoD.offiapp.excepciones.MiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,12 +66,15 @@ public class PortalControlador {
         return "login.html";
     }
 
-    @GetMapping("/logueado")
-    public String Logueado() {
-
-        return "usuariolog.html";
+  @GetMapping("/logueado")
+   public String Logueado(HttpSession session,Authentication authentication, ModelMap modelo) {
+   Usuario sesionUsuario = (Usuario) session.getAttribute("usuariosession");
+    if (authentication != null && authentication.isAuthenticated()) {
+        modelo.addAttribute("authorization", authentication.getAuthorities());
     }
-    
+    return "usuariolog.html";
+}
+
     @GetMapping("/conocenos")
     public String conocenos(){
         return "about_us.html";
