@@ -104,7 +104,7 @@ public class PortalControlador {
 public String electricistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Electricista);
 
@@ -115,7 +115,7 @@ public String electricistas(ModelMap modelo) {
 public String carpinteros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Carpintero = usuarios.stream().filter(usuario -> "Carpintero".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Carpintero = usuarios.stream().filter(usuario -> "Carpintero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Carpintero);
 
@@ -126,7 +126,7 @@ public String carpinteros(ModelMap modelo) {
 public String gasistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Gasista = usuarios.stream().filter(usuario -> "Gasista".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Gasista = usuarios.stream().filter(usuario -> "Gasista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Gasista);
 
@@ -137,7 +137,7 @@ public String gasistas(ModelMap modelo) {
 public String plomeros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Plomero = usuarios.stream().filter(usuario -> "Plomero".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Plomero = usuarios.stream().filter(usuario -> "Plomero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Plomero);
 
