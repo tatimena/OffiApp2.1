@@ -22,58 +22,49 @@ public class Trabajo {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
-    
-    @ManyToOne
-    @JoinColumn(name = "usuarioSolicitante_id")
-    private Usuario usuarioSolicitante;
-    
-    @ManyToOne
-    @JoinColumn(name = "proveedorAsignado_id")
-    private Usuario proveedorAsignado;
-    
+    private String trabajoId;
     private String estado;
     private String descripcion;
     
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+   
+    private String usuarioSolicitante_id;
+    
   
+    private String proveedorAsignado_id;
+    
     public Trabajo() {
     }
 
-    public Trabajo(String id, Usuario usuarioSolicitante, Usuario proveedorAsignado, String estado, String descripcion, Usuario usuario) {
-        this.id = id;
-        this.usuarioSolicitante = usuarioSolicitante;
-        this.proveedorAsignado = proveedorAsignado;
+    public Trabajo(String trabajoId, String usuarioSolicitante_id, String proveedorAsignado_id, String estado, String descripcion) {
+        this.trabajoId = trabajoId;
+        this.usuarioSolicitante_id = usuarioSolicitante_id;
+        this.proveedorAsignado_id = proveedorAsignado_id;
         this.estado = estado;
         this.descripcion = descripcion;
-        this.usuario = usuario;
-      
     }
 
-    public String getId() {
-        return id;
+    public String getTrabajoId() {
+        return trabajoId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTrabajoId(String trabajoId) {
+        this.trabajoId = trabajoId;
     }
 
-    public Usuario getUsuarioSolicitante() {
-        return usuarioSolicitante;
+    public String getUsuarioSolicitante_id() {
+        return usuarioSolicitante_id;
     }
 
-    public void setUsuarioSolicitante(Usuario usuarioSolicitante) {
-        this.usuarioSolicitante = usuarioSolicitante;
+    public void setUsuarioSolicitante_id(String usuarioSolicitante_id) {
+        this.usuarioSolicitante_id = usuarioSolicitante_id;
     }
 
-    public Usuario getProveedorAsignado() {
-        return proveedorAsignado;
+    public String getProveedorAsignado_id() {
+        return proveedorAsignado_id;
     }
 
-    public void setProveedorAsignado(Usuario proveedorAsignado) {
-        this.proveedorAsignado = proveedorAsignado;
+    public void setProveedorAsignado_id(String proveedorAsignado_id) {
+        this.proveedorAsignado_id = proveedorAsignado_id;
     }
 
     public String getEstado() {
@@ -91,16 +82,9 @@ public class Trabajo {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-
-    }
     
+    
+    
+ }
 
+   

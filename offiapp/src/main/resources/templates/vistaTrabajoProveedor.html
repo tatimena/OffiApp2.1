@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="/fragments/head :: head"></head>
+     <header class="header container">
+          
+                <nav th:replace="/fragments/navbar :: nav"></nav>  
+           
+        </header>  
+<body style="
+          background-color: rgb(42, 26, 94);
+          color: rgb(251, 229, 85);
+          font-family: 'Urbanist', sans-serif;
+          ">
+ 
+    
+    <h1>¡Bienvenido, <span th:text="${usuario.nombreUser}">Proveedor Ejemplo</span>!</h1>
+    
+    <h2>Perfil del Proveedor</h2>
+    <p>Nombre del proveedor: <span th:text="${proveedor.nombreUser}">Proveedor Ejemplo</span></p>
+
+    <h2>Perfil del Usuario</h2>
+    <p>Nombre de usuario: <span th:text="${proveedor.nombreUser}">Usuario Ejemplo</span></p>
+    <p>Teléfono: <span th:text="${proveedor.telefono}">123-456-7890</span></p>
+    <p>Descripcion: <span th:text="${proveedor.descripcion}">123-456-7890</span></p>
+    <p>Precio por hora del servicio:$ <span th:text="${proveedor.precioHora}">123-456-7890</span></p>
+<form method="post" action="/contratar-servicio">
+    <input type="hidden" name="nombre" th:value="${proveedor.nombreUser}">
+    <input type="hidden" name="descripcion" th:value="${proveedor.descripcion}">
+    <input type="hidden" name="precioHora" th:value="${proveedor.precioHora}">
+    <input type="hidden" name="proveedorAsignado_id" th:value="${proveedor.id}">
+    <input type="hidden" name="usuarioSolicitante_id" th:value="${usuario.id}">
+     <input type="hidden" name="estado" th:value="pendiente">
+ 
+    <button type="submit">Contratar Servicio</button>
+</form>
+   
+    
+    
+    
+    
+    <h3>Lista de Trabajos</h3>
+    <ul>
+        <li th:each="trabajo : ${trabajos}">
+            Trabajo: <span th:text="${trabajo.nombre}">Trabajo de Ejemplo</span>
+            <button th:if="${trabajo.estado == 'Pendiente'}" th:onclick="'cambiarEstado(\'' + ${trabajo.id} + '\')'">Aceptar</button>
+            <span th:text="${trabajo.estado}">Pendiente</span>
+        </li>
+    </ul>
+    
+          <footer class="footer container">
+            <div>
+                <nav th:replace="/fragments/footer :: footer"></nav>  
+            </div> 
+        </footer>
+
+    <script th:inline="javascript">
+       
+        function cambiarEstado(trabajoId) {
+            var estadoElement = document.getElementById('estado-' + trabajoId);
+
+            /* Aquí puedes agregar lógica para cambiar el estado y redirigir si es necesario */
+            
+            /* Ejemplo: Cambiar el estado de "Pendiente" a "Aceptado" */
+            estadoElement.textContent = 'Aceptado';
+        }
+  
+     
+    </script>
+</body>
+
+</html>

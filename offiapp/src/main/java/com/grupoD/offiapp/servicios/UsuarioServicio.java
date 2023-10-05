@@ -1,7 +1,7 @@
 package com.grupoD.offiapp.servicios;
 
 import com.grupoD.offiapp.Entidades.Imagen;
-import com.grupoD.offiapp.Entidades.Trabajo;
+
 import com.grupoD.offiapp.Entidades.Usuario;
 import com.grupoD.offiapp.enumeraciones.Rol;
 import com.grupoD.offiapp.excepciones.MiException;
@@ -46,13 +46,14 @@ public class UsuarioServicio implements UserDetailsService {
     @Autowired
     private ImagenServicio imagenServicio;
 
-//asi tiene que estar en el thymelife
+
     @Transactional
-    public void registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
+    public Usuario registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
         
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
+        usuario.getId();
         usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
@@ -67,6 +68,7 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.USER);
         }
         usuarioRepositorio.save(usuario);
+        return usuario;
 
     }
 
@@ -100,6 +102,9 @@ public class UsuarioServicio implements UserDetailsService {
             
             session.setAttribute("usuariosession", usuario);
             permisos.add(p);
+          
+
+          
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
 
         } else {
@@ -108,10 +113,14 @@ public class UsuarioServicio implements UserDetailsService {
 
     }
 
+
+            
     @Transactional
 
-    public void registrarProv(String nombreUser,String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
+
+    public Usuario registrarProv(String nombreUser,String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
         
+
 
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
@@ -119,6 +128,7 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
         usuario.setServicio(servicio);
+        usuario.getId();
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
 
@@ -137,7 +147,33 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.PROVEEDOR);
         }
         usuarioRepositorio.save(usuario);
+
+       return usuario;
     }
+
+    /*
+    public void validar(Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+        if (telefono == null) {
+            throw new MiException("Completar con el número de teléfono");
+        }
+        if (servicio == null || servicio.isEmpty()) {
+            throw new MiException("El servicio no puede estar vacío");
+        }
+        if (precioHora == null) {
+            throw new MiException("Complete con el precio de la hora a trabajar");
+        }
+        if (descripcion == null || descripcion.isEmpty()) {
+            throw new MiException("La descripción no puede estar vacía");
+        }
+    }
+
+   
+*/
+
+
+
+    
+
 
 
     @Transactional
@@ -218,28 +254,39 @@ public class UsuarioServicio implements UserDetailsService {
 
 
     public List<Usuario> listarUsuarios() {
-
         List<Usuario> usuarios = usuarioRepositorio.findAll();
-       
-        return usuarios;
-    }
-   
-   
+        List<Usuario> proveedores = new ArrayList<>();
 
-    @Transactional
-    public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
-        if (trabajo.getUsuarioSolicitante() != null) {
-            Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante().getId()); // Corregido aquí
-            if (solicitante != null) {
-                trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+        for (Usuario usuario : usuarios) {
+            if (usuario.getServicio() != null) {
+             
+                proveedores.add(usuario);
             }
         }
-        if (trabajo.getProveedorAsignado() != null) {
-            Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
-            if (proveedor != null) {
-                trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
-            }
-        }
+
+        return proveedores;
     }
+
+
+    
+    
+    //@Transactional
+//public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
+    //if (trabajo.getUsuarioSolicitante_id() != null) {
+     //   Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante_id().getId()); // Corregido aquí
+       // if (solicitante != null) {
+       //     trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+       // }
+   // }
+    //if (trabajo.getProveedorAsignado() != null) {
+       // Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
+       // if (proveedor != null) {
+       //     trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
+        //}
+   // }
+//}
+
+
+
 
 }

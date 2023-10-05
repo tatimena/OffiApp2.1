@@ -18,9 +18,15 @@
                 <h2
                     class="display-1 px-4"
                     style="
-                    background-color: rgb(4, 28, 50); 
+
+
+
+                    color: rgb(251, 146, 36);
+
+                    background-color: rgb(4, 28, 50);
                     font-weight: 900;
                     color: rgb(249, 76, 16);
+
                     font-family: 'Urbanist', sans-serif;
                     "
                     >
@@ -29,14 +35,15 @@
                 </h2>
             </div>
 
+
             <div class="container-lg mt-3">
-                <form th:action="@{/registrar}" 
+                <form th:action="@{/registrarUs}" 
                       method="POST" 
                       enctype="multipart/form-data"
                       class="container-lg mt-4"
                       style="
                       background-color: rgb(4, 28, 50);
-                      padding: 10px; 
+                      padding: 10px;
                       "> 
                     <div
                         th:if="${error != null}"
@@ -61,6 +68,7 @@
                             </svg>
                         </div>
                     </div>
+
                     <div class="container">
                         <h2>Registrarse</h2>   
                         <br>
@@ -208,6 +216,7 @@
 
                 </form>
             </div>
+
 
 
         </section>
