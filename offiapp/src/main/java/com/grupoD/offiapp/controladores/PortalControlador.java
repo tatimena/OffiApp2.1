@@ -4,15 +4,14 @@ import com.grupoD.offiapp.Entidades.Calificacion;
 import com.grupoD.offiapp.Entidades.Trabajo;
 
 import com.grupoD.offiapp.Entidades.Usuario;
-
 import com.grupoD.offiapp.enumeraciones.Rol;
-
-
 import com.grupoD.offiapp.excepciones.MiException;
+
 import com.grupoD.offiapp.repositorios.CalificacionRepositorio;
 import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import com.grupoD.offiapp.servicios.CalificacionServicio;
 import com.grupoD.offiapp.servicios.TrabajoServicio;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,11 +24,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.util.stream.Collectors;
-import static jdk.nashorn.internal.runtime.Debug.id;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.ui.Model;
+
+
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,10 +50,12 @@ public class PortalControlador {
      @Autowired
     private CalificacionServicio calificacionServicio;
 
+
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
     @Autowired
     private CalificacionRepositorio calificacionRepositorio;
+
 
     @GetMapping("/")
     public String index() throws MiException {
@@ -66,13 +69,12 @@ public class PortalControlador {
         return "registro_usuario.html";
     }
 
-
     @PostMapping("/registrarUs")
     public String registrarUs(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, ModelMap modelo) throws MiException {
-      
+
         try {
             usuarioServicio.registrarUs(archivo, nombreUser, direccion, email, password, password2, telefono, servicio);
-            
+
             modelo.put("exito", "Usted se ha registrado correctamente");
 
             return "index.html";
@@ -86,7 +88,6 @@ public class PortalControlador {
 
     }
 
-
     @GetMapping("/registroProveedor")
     public String RegistroProveedor() {
         return "registro_proveedor.html";
@@ -97,8 +98,12 @@ public class PortalControlador {
 
         try {
 
-            Usuario proveedor= usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
+
+            Usuario proveedor= usuarioServicio.registrarProv(nombreUser, descripcion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
           
+
+           
+
 
             modelo.put("exito", "Usted se ha registrado correctamente");
             String proveedorId=proveedor.getId();
@@ -118,20 +123,20 @@ public class PortalControlador {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> proveedores = usuarios.stream().filter(usuario -> usuario.getRol() == Rol.PROVEEDOR).collect(Collectors.toList());
-   
+
         modelo.addAttribute("usuarios", proveedores);
 
         return "oficios.html";
     }
 
     @GetMapping("/electricistas")
-public String electricistas(ModelMap modelo) {
+    public String electricistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
         
         
 
         List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
-       
+
 
         modelo.addAttribute("usuarios", Electricista);
 
@@ -139,7 +144,7 @@ public String electricistas(ModelMap modelo) {
     }
 
     @GetMapping("/carpinteros")
-public String carpinteros(ModelMap modelo) {
+    public String carpinteros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Carpintero = usuarios.stream().filter(usuario -> "Carpintero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -150,7 +155,7 @@ public String carpinteros(ModelMap modelo) {
     }
 
     @GetMapping("/gasistas")
-public String gasistas(ModelMap modelo) {
+    public String gasistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Gasista = usuarios.stream().filter(usuario -> "Gasista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -161,7 +166,7 @@ public String gasistas(ModelMap modelo) {
     }
 
     @GetMapping("/plomeros")
-public String plomeros(ModelMap modelo) {
+    public String plomeros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Plomero = usuarios.stream().filter(usuario -> "Plomero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -171,9 +176,8 @@ public String plomeros(ModelMap modelo) {
         return "plomero_list.html";
     }
 
-
     @GetMapping("/login")
-public String login(@RequestParam(required = false) String error, ModelMap modelo
+    public String login(@RequestParam(required = false) String error, ModelMap modelo
     ) {
         if (error != null) {
             modelo.put("error", "Usuario o Contraseña inválidos");
@@ -182,7 +186,7 @@ public String login(@RequestParam(required = false) String error, ModelMap model
     }
 
     @GetMapping("/logueado")
-public String Logueado() {
+    public String Logueado() {
 
         return "inicio1_usuario.html";
     }
@@ -403,6 +407,7 @@ public String obtenerTrabajosContratadosPorUsuario(
 
 
     
+
 
 
 

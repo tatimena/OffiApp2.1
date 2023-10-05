@@ -2,13 +2,14 @@ import com.grupoD.offiapp.Entidades.Calificacion;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class ProveedorControlador{
-
+@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     @GetMapping("/perfilProveedor")
     public String mostrarPerfilProveedor(Model model) {
         // Aquí puedes agregar lógica para obtener los datos del proveedor

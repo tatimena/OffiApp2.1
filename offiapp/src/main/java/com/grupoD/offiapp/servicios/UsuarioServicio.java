@@ -96,12 +96,15 @@ public class UsuarioServicio implements UserDetailsService {
         if (usuario != null) {
             List<GrantedAuthority> permisos = new ArrayList();
             GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
-            permisos.add(p);
-            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-
+           ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            
             HttpSession session = attr.getRequest().getSession(true);
-
+            
             session.setAttribute("usuariosession", usuario);
+            permisos.add(p);
+          
+
+          
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
 
         } else {
@@ -113,18 +116,27 @@ public class UsuarioServicio implements UserDetailsService {
 
             
     @Transactional
-    public Usuario registrarProv(MultipartFile archivo,String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-         
+
+
+    public Usuario registrarProv(String nombreUser,String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
+        
+
+
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
-
+        usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
         usuario.setServicio(servicio);
         usuario.getId();
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
+
+        
         Imagen imagen = imagenServicio.guardar(archivo);
+
+        usuario.setImagen(imagen); 
+
 
         usuario.setImagen(imagen); 
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
@@ -135,7 +147,8 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.PROVEEDOR);
         }
         usuarioRepositorio.save(usuario);
-return usuario;
+
+       return usuario;
     }
 
     /*
@@ -156,6 +169,10 @@ return usuario;
 
    
 */
+
+
+
+    
 
 
 
@@ -235,6 +252,7 @@ return usuario;
         }
     }
 
+
     public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = usuarioRepositorio.findAll();
         List<Usuario> proveedores = new ArrayList<>();
@@ -248,6 +266,7 @@ return usuario;
 
         return proveedores;
     }
+
 
     
     
