@@ -25,6 +25,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <th scope="col">Email</th>
                         <th scope="col">Servicio</th>
                         <th scope="col">Precio por hora</th>
+                        <th scope="col" sec:authorize="hasRole('ADMIN')">Modificar</th>
+                        <th scope="col" sec:authorize="hasRole('ADMIN')">Dar de baja</th>
 
                     </tr>
                 </thead> 
@@ -33,7 +35,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <td scope="row" th:text="${usuario.nombreUser}"></td> 
                         <td th:text="${usuario.email}"></td>
                         <td th:text="${usuario.servicio}"></td>  
-                        <td th:text="${usuario.precioHora}"></td>  
+                        <td th:text="${usuario.precioHora}"></td> 
+                        <td >
+                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/modificar/__${usuario.id}__}"><i class="fas fa-feather-alt"></i>Modificar</a>
+                        </td>
+                        <td >
+                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/baja/__${usuario.id}__}"><i class="fas fa-feather-alt"></i>Dar de baja</a>
+                        </td>
                     </tr>  
 
                 </tbody>

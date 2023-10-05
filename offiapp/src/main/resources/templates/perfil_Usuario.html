@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<!DOCTYPE html>
 <html lang="es">
 
     <head>
@@ -30,6 +35,7 @@
         <main>
             <style>
                 *{
+                    margin: 0;
                     padding: 0;
                     box-sizing: border-box;
                 }
@@ -47,7 +53,7 @@
                     width: 30%;   /* Ocupa la mitad del ancho disponible */
                     height: 100%;
                     border: 1px; /* Márgenes para separar las secciones */
-
+                   
                 }
 
 
@@ -56,29 +62,24 @@
                     float: right;
                     width: 70%;
                     height: 100%;
-                    h4:border box;
+                     h4:border box;
                 }
             </style>
 
             <article>
                 <section class="perfil">
-                    <input hidden th:text="${proveedor.id}" name="id">
-                    <h4 float center><span th:text="${proveedor.nombreUser}"></span></h4>
+
+                    <h4 float center><span th:text="${usuario.nombreUser}"></span></h4>
 
                     <div>
-                        <h4><span th:text="${proveedor.servicio}"></span></h4>
-                    </div>
-
-
-                    <div>
-                        <img th:src="@{/imagen/perfil/{id}(id=${proveedor.id})}" alt="Imagen del proveedor" width="200" height="150">
+                        <img th:src="@{/imagen/perfil/{id}(id=${usuario.id})}" alt="Imagen del usuario" width="200" height="150">
                     </div>
 
 
                 </section>
 
                 <section class="contenido">
-                    <div><Span >Contraseña:</Span></div>
+                    <div><Span >Contarseña:</Span></div>
                     <div>
                         <h4>••••••••</h4>
                     </div>
@@ -87,42 +88,28 @@
 
                     <div><Span >Correo electronico:</Span></div>
                     <div>
-                        <h4><span th:text="${proveedor.email}"></span></h4>
+                        <h4><span th:text="${usuario.email}"></span></h4>
                     </div>
 
                     <br>
 
                     <div><Span >Telefono</Span></div>
                     <div>
-                        <h4><span th:text="${proveedor.telefono}"></span></h4>
+                        <h4><span th:text="${usuario.telefono}"></span></h4>
                     </div>
 
                     <br> 
                     <div><Span >Direccion</Span></div>
                     <div>
-                        <h4><span th:text="${proveedor.direccion}"></span></h4>
+                        <h4><span th:text="${usuario.direccion}"></span></h4>
                     </div>
 
-                    <br>
-                    <div><Span >Precio por hora</Span></div>
-                    <div>
-                        <h4><span th:text="${proveedor.precioHora}"></span></h4>
-
-                        <br>
-
-                        <div><Span >Descripcion</Span></div>
-                        <div>
-                            <h4><span th:text="${proveedor.descripcion}"></span></h4>
-                        </div>
-
-
-                        <a class="nav-link" href="/proveedor/modificar">Cambiar Datos</a> 
+                 <button class="btn btn-primary link volverr" type="submit">CAMBIAR DATOS</button>  
                 </section>
-
             </article>
 
             <aside>
-
+               
 
             </aside>
 

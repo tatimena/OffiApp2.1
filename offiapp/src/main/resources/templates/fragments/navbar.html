@@ -25,8 +25,9 @@
                    <a class="nav-link" href="/login" th:if="${session.usuariosession == null}" th:href="@{/login}" >Ingresa</a>
                    <a class="nav-link" href="/registro"th:if="${session.usuariosession == null}" th:href="@{/registro}">Registro de Usuarios</a>
                    <a class="nav-link" href="/registroProveedor"th:if="${session.usuariosession == null}" th:href="@{/registroProveedor}">Registro de Proveedores</a>
-                   <a class="nav-link" href="/perfilProveedor" sec:authorize="hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')" >Lista Proveedores</a>
+                   <a class="nav-link" href="/proveedores" sec:authorize="hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')" >Lista Proveedores</a>
                    <a class="nav-link" href="/conocenos"th:href="@{/conocenos}">Sobre nosotros</a>
+                   <a class="nav-link" th:if="${session.usuariosession != null}" th:href="@{/logout}" role="button">Cerrar sesión <i class="icofont-login"></i></a>
                 
 
             </div>

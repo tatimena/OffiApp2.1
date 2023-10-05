@@ -2,13 +2,7 @@ package com.grupoD.offiapp.controladores;
 
 import com.grupoD.offiapp.Entidades.Calificacion;
 import com.grupoD.offiapp.Entidades.Usuario;
-<<<<<<< HEAD
-=======
-
 import com.grupoD.offiapp.enumeraciones.Rol;
-
-
->>>>>>> 536496f61fb996c55f97a35f0a3735659a0ab39f
 import com.grupoD.offiapp.excepciones.MiException;
 import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
 import java.util.ArrayList;
 import java.util.List;
-<<<<<<< HEAD
 import javax.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
-=======
 import java.util.stream.Collectors;
 import static jdk.nashorn.internal.runtime.Debug.id;
->>>>>>> 536496f61fb996c55f97a35f0a3735659a0ab39f
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,13 +46,12 @@ public class PortalControlador {
         return "registro_usuario.html";
     }
 
-
     @PostMapping("/registrarUs")
     public String registrarUs(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, ModelMap modelo) throws MiException {
-      
+
         try {
             usuarioServicio.registrarUs(archivo, nombreUser, direccion, email, password, password2, telefono, servicio);
-            
+
             modelo.put("exito", "Usted se ha registrado correctamente");
 
             return "index.html";
@@ -73,7 +65,6 @@ public class PortalControlador {
 
     }
 
-
     @GetMapping("/registroProveedor")
     public String RegistroProveedor() {
         return "registro_proveedor.html";
@@ -84,7 +75,7 @@ public class PortalControlador {
 
         try {
             usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
-          
+
             modelo.put("exito", "Usted se ha registrado correctamente");
             return "index.html";
         } catch (MiException ex) {
@@ -97,19 +88,62 @@ public class PortalControlador {
 
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/modificar/{id}")
+    public String modificar(@PathVariable String id, ModelMap modelo) {
+       // Usuario usuario = usuarioServicio.getOne(id);
+       // modelo.put("usuario", usuarioServicio.getOne(id));
+
+        modelo.addAttribute("usuario", usuarioServicio.getOne(id));
+        return "modificar_prov.html";
+    }
+
+    @PostMapping("/modificado/{id}")
+    public String modificado(@PathVariable String id, MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+        System.out.println("hola");
+       try {
+            usuarioServicio.modificarUsuario(id, archivo,nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+       
+            System.out.println("prueba");
+            return "redirect:/proveedores";
+       } catch (MiException ex) {
+          
+
+       
+        modelo.put("error", ex.getMessage());
+       return "oficios.html";
+      }
+        
+    }
+  
+    
+    
+    
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/baja/{id}")
+    public String baja(@PathVariable String id, ModelMap modelo) {
+        try {
+            usuarioServicio.darDeBaja(id);
+        } catch (MiException ex) {
+            modelo.put("error", ex.getMessage());
+            return "oficios.html";
+        }
+        return "redirect:../proveedores";
+    }
+
     @GetMapping("/proveedores")
     public String proveedores(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> proveedores = usuarios.stream().filter(usuario -> usuario.getRol() == Rol.PROVEEDOR).collect(Collectors.toList());
-   
+
         modelo.addAttribute("usuarios", proveedores);
 
         return "oficios.html";
     }
 
     @GetMapping("/electricistas")
-public String electricistas(ModelMap modelo) {
+    public String electricistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -120,7 +154,7 @@ public String electricistas(ModelMap modelo) {
     }
 
     @GetMapping("/carpinteros")
-public String carpinteros(ModelMap modelo) {
+    public String carpinteros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Carpintero = usuarios.stream().filter(usuario -> "Carpintero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -131,7 +165,7 @@ public String carpinteros(ModelMap modelo) {
     }
 
     @GetMapping("/gasistas")
-public String gasistas(ModelMap modelo) {
+    public String gasistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Gasista = usuarios.stream().filter(usuario -> "Gasista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -142,7 +176,7 @@ public String gasistas(ModelMap modelo) {
     }
 
     @GetMapping("/plomeros")
-public String plomeros(ModelMap modelo) {
+    public String plomeros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
         List<Usuario> Plomero = usuarios.stream().filter(usuario -> "Plomero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
@@ -152,9 +186,8 @@ public String plomeros(ModelMap modelo) {
         return "plomero_list.html";
     }
 
-
     @GetMapping("/login")
-public String login(@RequestParam(required = false) String error, ModelMap modelo
+    public String login(@RequestParam(required = false) String error, ModelMap modelo
     ) {
         if (error != null) {
             modelo.put("error", "Usuario o Contraseña inválidos");
@@ -162,7 +195,7 @@ public String login(@RequestParam(required = false) String error, ModelMap model
         return "login.html";
     }
 
-<<<<<<< HEAD
+    /*
   @GetMapping("/logueado")
    public String Logueado(HttpSession session,Authentication authentication, ModelMap modelo) {
    Usuario sesionUsuario = (Usuario) session.getAttribute("usuariosession");
@@ -170,26 +203,37 @@ public String login(@RequestParam(required = false) String error, ModelMap model
         modelo.addAttribute("authorization", authentication.getAuthorities());
     }
     return "usuariolog.html";
-}
-=======
+} */
     @GetMapping("/logueado")
-public String Logueado() {
+    public String Logueado() {
 
         return "inicio1_usuario.html";
     }
->>>>>>> 536496f61fb996c55f97a35f0a3735659a0ab39f
 
     @GetMapping("/conocenos")
 
-public String conocenos() {
-        return "about_us.html";
-    }
-
-    /*
-=======
     public String conocenos() {
         return "about_us.html";
     }
+    
+    @GetMapping("/perfilProveedor")//{id} me tiene que llegar el id del usuario(@PathVariable String id) que se loguee para mostrar la info 
+    public String mostrarPerfilProveedor(ModelMap modelo, @RequestParam String id) {
+        Usuario proveedor = usuarioServicio.getOne("id");
+        modelo.addAttribute("proveedor",proveedor);
+        return "perfil_Proveedor.html";//Este es el nombre de la vista HTML (perfilProveedor.html)
+    }
+    
+    @GetMapping("/perfilUsuario")
+    public String mostrarPerfilUsuario(ModelMap modelo) {
+        Usuario usuario = usuarioServicio.getOne("dbaf9501-af27-4bcd-ba84-77fe97641908");
+        modelo.addAttribute("usuario", usuario);
+        return "perfil_Usuario.html"; // Este es el nombre de la vista HTML (perfilProveedor.html)
+    }
+    
+    
+
+    /*
+
 
     @GetMapping("/registroProveedor")
     public String RegistroProveedor() {
@@ -274,4 +318,3 @@ public String conocenos() {
 <<<<<<< HEAD
      */
 }
-

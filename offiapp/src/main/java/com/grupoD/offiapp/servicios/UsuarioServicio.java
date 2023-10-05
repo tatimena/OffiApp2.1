@@ -22,12 +22,10 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-<<<<<<< HEAD
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-=======
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.ui.ModelMap;
->>>>>>> 536496f61fb996c55f97a35f0a3735659a0ab39f
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -49,10 +47,9 @@ public class UsuarioServicio implements UserDetailsService {
     @Autowired
     private ImagenServicio imagenServicio;
 
-//asi tiene que estar en el thymelife
     @Transactional
     public void registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
-        
+
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
@@ -65,7 +62,7 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (nombreUser.equals("Admin")) {
-            usuario.setRol(Rol.ADMIN);  
+            usuario.setRol(Rol.ADMIN);
         } else {
             usuario.setRol(Rol.USER);
         }
@@ -97,10 +94,10 @@ public class UsuarioServicio implements UserDetailsService {
         if (usuario != null) {
             List<GrantedAuthority> permisos = new ArrayList();
             GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
-           ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+
             HttpSession session = attr.getRequest().getSession(true);
-            
+
             session.setAttribute("usuariosession", usuario);
             permisos.add(p);
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
@@ -112,8 +109,8 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
     @Transactional
-    public void registrarProv(MultipartFile archivo,String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-         
+    public void registrarProv(MultipartFile archivo, String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
 
@@ -124,7 +121,7 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setDescripcion(descripcion);
         Imagen imagen = imagenServicio.guardar(archivo);
 
-        usuario.setImagen(imagen); 
+        usuario.setImagen(imagen);
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (servicio.isEmpty()) {
@@ -152,12 +149,41 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
      */
-    @Transactional
+ /*  @Transactional
     public void modificarUsuario(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        
+
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
         Usuario usuario = usuarioRepositorio.buscarPorEmail(email);
+
+        if (usuario != null) {
+
+            usuario.setNombreUser(nombreUser);
+            usuario.setDireccion(direccion);
+            usuario.setEmail(email);
+            usuario.setContrasenia(contrasenia);
+            usuario.setTelefono(telefono);
+            usuario.setServicio(servicio);
+            usuario.setPrecioHora(precioHora);
+            usuario.setDescripcion(descripcion);
+            Imagen imagen = imagenServicio.guardar(archivo);
+
+            usuario.setImagen(imagen);
+
+            usuarioRepositorio.save(usuario);
+
+        } else {
+            throw new MiException("no se encotro el usuario");
+
+        }
+    }
+     */
+    @Transactional
+    public void modificarUsuario(String id, MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+
+        validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+
+        Usuario usuario = usuarioRepositorio.buscarPorid(id);
 
         if (usuario != null) {
 
@@ -245,11 +271,9 @@ public class UsuarioServicio implements UserDetailsService {
     public List<Usuario> listarUsuarios() {
 
         List<Usuario> usuarios = usuarioRepositorio.findAll();
-       
+
         return usuarios;
     }
-   
-   
 
     @Transactional
     public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
@@ -264,6 +288,16 @@ public class UsuarioServicio implements UserDetailsService {
             if (proveedor != null) {
                 trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
             }
+        }
+    }
+
+    @Transactional
+    public void darDeBaja(String id) throws MiException {
+        getOne(id);
+        Optional<Usuario> respN = usuarioRepositorio.findById(id);
+        if (respN.isPresent()) {
+            Usuario usuario = respN.get();
+            usuarioRepositorio.delete(usuario);
         }
     }
 
