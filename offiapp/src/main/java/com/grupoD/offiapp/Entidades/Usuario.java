@@ -34,6 +34,8 @@ public class Usuario {
     private String descripcion;
     @Enumerated(EnumType.STRING)
     protected Rol rol;
+    
+    
     @OneToOne
     private Imagen imagen;
 

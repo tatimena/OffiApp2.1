@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:replace="/fragments/head :: head"></head>
-    <body style="background-color: rgb(22, 30, 84)">
+    <body>
         <header class="header container">
-           
-                <nav th:replace="/fragments/navbar :: nav"></nav>  
-           
+
+            <nav th:replace="/fragments/navbar :: nav"></nav>  
+
         </header> 
         <br>
         <div class="container-lg">
             <h1
-                class="display-4"
+                class="display-5 px-4"
                 style="
-                background-color: rgb(22, 30, 84);
-                color: rgb(235, 230, 69);
+                background-color: rgb(4, 28, 50);
+                color: rgb(249, 76, 16);
                 font-family: 'Urbanist', sans-serif;
+                font-weight: 900;
                 "
                 >
                 Queremos acompañarte porque sabemos de dificil que es encontrar
                 profesionales de confianza.
-               
-                
+                Por eso creamos esta app para que puedas encontrar confianza
+                y profesionales a tu disposición.
+
+
             </h1>
         </div>
         <br>
@@ -33,36 +36,7 @@
                     />
             </div>
         </section>
-        <br>
 
-        <section class="container-lg">
-            <div class="container-lg">
-            <p
-                class="display-4"
-                style="
-                background-color: rgb(22, 30, 84);
-                color: rgb(235, 230, 69);
-                font-family: 'Urbanist', sans-serif;
-                "
-                >
-                Por eso creamos esta app para que puedas encontrar confianza
-                y profesionales a tu disposición.
-            </p>
-        </div>
-        </section>
-        <br>
-        
-        <section>
-            <div class="container-lg">
-                <img
-                    class="img-fluid"
-                    src="https://4.imimg.com/data4/SE/EK/MY-20762261/electrical-plumbing-services.jpg"
-                    alt="Herramientas"
-                    />
-            </div>
-        </section>
-        <br>
-       
         <footer class="footer container">
             <div>
                 <nav th:replace="/fragments/footer :: footer"></nav>  

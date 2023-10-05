@@ -1,7 +1,7 @@
 package com.grupoD.offiapp.servicios;
 
 import com.grupoD.offiapp.Entidades.Imagen;
-import com.grupoD.offiapp.Entidades.Trabajo;
+
 import com.grupoD.offiapp.Entidades.Usuario;
 import com.grupoD.offiapp.enumeraciones.Rol;
 import com.grupoD.offiapp.excepciones.MiException;
@@ -24,8 +24,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.ui.ModelMap;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -48,11 +50,12 @@ public class UsuarioServicio implements UserDetailsService {
     private ImagenServicio imagenServicio;
 
     @Transactional
-    public void registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
+    public Usuario registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
 
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
+        usuario.getId();
         usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
@@ -67,6 +70,7 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.USER);
         }
         usuarioRepositorio.save(usuario);
+        return usuario;
 
     }
 
@@ -100,6 +104,7 @@ public class UsuarioServicio implements UserDetailsService {
 
             session.setAttribute("usuariosession", usuario);
             permisos.add(p);
+
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
 
         } else {
@@ -109,18 +114,19 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
     @Transactional
-    public void registrarProv(MultipartFile archivo, String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+
+    public Usuario registrarProv(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
 
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
-
+        usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
         usuario.setServicio(servicio);
+        usuario.getId();
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
         Imagen imagen = imagenServicio.guardar(archivo);
-
         usuario.setImagen(imagen);
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
@@ -131,6 +137,7 @@ public class UsuarioServicio implements UserDetailsService {
         }
         usuarioRepositorio.save(usuario);
 
+        return usuario;
     }
 
     /*
@@ -148,8 +155,10 @@ public class UsuarioServicio implements UserDetailsService {
             throw new MiException("La descripción no puede estar vacía");
         }
     }
+  
      */
- /*  @Transactional
+    @Transactional
+
     public void modificarUsuario(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
 
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
@@ -161,36 +170,7 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setNombreUser(nombreUser);
             usuario.setDireccion(direccion);
             usuario.setEmail(email);
-            usuario.setContrasenia(contrasenia);
-            usuario.setTelefono(telefono);
-            usuario.setServicio(servicio);
-            usuario.setPrecioHora(precioHora);
-            usuario.setDescripcion(descripcion);
-            Imagen imagen = imagenServicio.guardar(archivo);
-
-            usuario.setImagen(imagen);
-
-            usuarioRepositorio.save(usuario);
-
-        } else {
-            throw new MiException("no se encotro el usuario");
-
-        }
-    }
-     */
-    @Transactional
-    public void modificarUsuario(String id, MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-
-        validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
-
-        Usuario usuario = usuarioRepositorio.buscarPorid(id);
-
-        if (usuario != null) {
-
-            usuario.setNombreUser(nombreUser);
-            usuario.setDireccion(direccion);
-            usuario.setEmail(email);
-            usuario.setContrasenia(nombreUser);
+            usuario.setContrasenia(password);
             usuario.setTelefono(telefono);
             usuario.setServicio(servicio);
             usuario.setPrecioHora(precioHora);
@@ -254,13 +234,14 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
 
-    /*   public List<Usuario> listarProveedores() {
+
+    /* public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = usuarioRepositorio.findAll();
         List<Usuario> proveedores = new ArrayList<>();
 
         for (Usuario usuario : usuarios) {
             if (usuario.getServicio() != null) {
-                // El usuario tiene el atributo "servicio" cargado, lo consideramos un proveedor
+             
                 proveedores.add(usuario);
             }
         }
@@ -269,28 +250,27 @@ public class UsuarioServicio implements UserDetailsService {
     }
      */
     public List<Usuario> listarUsuarios() {
-
         List<Usuario> usuarios = usuarioRepositorio.findAll();
 
         return usuarios;
     }
 
-    @Transactional
-    public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
-        if (trabajo.getUsuarioSolicitante() != null) {
-            Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante().getId()); // Corregido aquí
-            if (solicitante != null) {
-                trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
-            }
-        }
-        if (trabajo.getProveedorAsignado() != null) {
-            Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
-            if (proveedor != null) {
-                trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
-            }
-        }
-    }
-
+    //@Transactional
+//public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
+    //if (trabajo.getUsuarioSolicitante_id() != null) {
+    //   Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante_id().getId()); // Corregido aquí
+    // if (solicitante != null) {
+    //     trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+    // }
+    // }
+    //if (trabajo.getProveedorAsignado() != null) {
+    // Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
+    // if (proveedor != null) {
+    //     trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
+    //}
+    // }
+//}
+    
     @Transactional
     public void darDeBaja(String id) throws MiException {
         getOne(id);

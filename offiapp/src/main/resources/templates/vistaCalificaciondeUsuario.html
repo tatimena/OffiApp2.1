@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="/fragments/head :: head"></head>
+     <header class="header container">
+          
+                <nav th:replace="/fragments/navbar :: nav"></nav>  
+           
+        </header>  
+<body style="
+          background-color: rgb(42, 26, 94);
+          color: rgb(251, 229, 85);
+          font-family: 'Urbanist', sans-serif;
+          ">
+
+    <h1>Calificación del Trabajo</h1>
+
+    <h2>Detalles del Trabajo</h2>
+    <p>id del Trabajo: <span th:text="${trabajo.trabajoId}">Trabajo de Ejemplo</span></p>
+    
+    <p>Descripción del Trabajo: <span th:text="${trabajo.descripcion}">Descripción de Ejemplo</span></p>
+    <p>nombre del proveedor: <span th:text="hola">Descripción de Ejemplo</span></p>
+
+    <h2>Calificación y Comentario</h2>
+    <form method="post" action="/calificar/{trabajoId}">
+        <label for="calificar">Calificación:</label>
+        <input type="number" id="calificacion" name="calificar" min="1" max="5" required>
+        <input>
+
+        <label for="comentario">Comentario:</label>
+        <textarea id="comentario" name="comentario" rows="4" cols="50" required></textarea>
+
+        <button type="submit">Enviar Calificación</button>
+    </form>
+</body>
+</html>

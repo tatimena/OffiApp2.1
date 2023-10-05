@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:replace="/fragments/head :: head"></head>
-    <body style="background-color: rgb(22, 30, 84)">
+    <body>
         <header class="header container">
 
            
@@ -10,33 +10,27 @@
 
         </header>   
 
-        <div class="container-lg mt-2 mb-2">
+        <div class="container-lg mt-4 mb-4">
             <h1
                 class="display-1 px-4"
                 style="
-                background-color: rgb(210, 19, 18);
-                color: rgb(22, 30, 84);
-                font-family: 'Urbanist', sans-serif;
-                "
+                    background-color: rgb(4, 28, 50); 
+                    font-weight: 900;
+                    color: rgb(249, 76, 16);
+                    font-family: 'Urbanist', sans-serif;
+                    "
                 >
-                UNA página <br />
+                UNA página 
+                <br />
                 TODOS los servicios
             </h1>
         </div>
-        <section>
-            <div class="container-lg">
-                <img
-                    class="img-fluid"
-                    src="https://static5.herbertmateriais.com.br/files/2018/10/banner-ferramentas-herbert-e1539008340676.jpg"
-                    alt="Herramientas"
-                    />
-            </div>
-        </section>
+       
 
         <section class="container-lg mt-4">
             <div class="mb-4" style="display: flex; justify-content: space-between;">
-                <a href="http://localhost:8080/registro" class="btn btn-success btn-lg" style="flex-grow: 1; margin-right: 8px;">Registrarse como Usuario</a>
-                <a href="http://localhost:8080/registroProveedor" class="btn btn-success btn-lg" style="flex-grow: 1; margin-left: 8px;">Registrarte como Proveedor</a>
+                <a href="http://localhost:8080/registro" class="btn btn-primary btn-lg" style="flex-grow: 1; margin-right: 8px;">Registrate como Usuario</a>
+                <a href="http://localhost:8080/registroProveedor" class="btn btn-primary btn-lg" style="flex-grow: 1; margin-left: 8px;">Registrate como Proveedor</a>
             </div>
             <!-- El resto de tu contenido aquí -->
         </section>
@@ -44,7 +38,8 @@
 
         <section class="container-lg mt-4">
             <div class="card-group">
-                <div class="card text-bg-warning mx-1">
+                
+                <div class="card text-bg-success mx-1">
                     <img
                         src="https://electricistajuarez.com/root/uploads/2021/01/Las-10-claves-para-saber-si-eres-buen-electricista.jpg"
                         class="card-img-top"
@@ -58,14 +53,15 @@
                             actualizado con las últimas normativas y tendencias del rubro.
                             Consultame por mi disponibilidad.
                         </p>
-                        <button class="btn btn-primary mt-2" onclick="window.location.href='/registro'">Ver Teléfono</button>
-                        <button class="btn btn-primary mt-2" onclick="window.location.href='/registro'">Ver Precio por Hora</button>
+                        <button class="btn btn-warning mt-2" onclick="window.location.href='/proveedores'">Ver Teléfono</button>
+                        <button class="btn btn-warning mt-2" onclick="window.location.href='/proveedores'">Ver Precio por Hora</button>
                     </div>
                     <div class="card-footer">
                         <small class="text-body-secondary">Hace 3 meses en OffAPP</small>
                     </div>
                 </div>
-                <div class="card card text-bg-danger mx-1">
+                
+                <div class="card card text-bg-success mx-1">
                     <img
                         src="https://cloudfront-us-east-1.images.arcpublishing.com/elespectador/JPDEQQNU4JD5TK2IIZGAVC4JUA.jpeg"
                         class="card-img-top"
@@ -78,14 +74,14 @@
                             Me encanta trabajar con la madera. Me gusta ser responsable y
                             cumplir con mis entregas. Hago amoblamientos a medida, consultame.
                         </p>
-                        <button class="btn btn-primary mt-2" onclick="window.location.href='/registro'">Ver Teléfono</button>
-                        <button class="btn btn-primary mt-2" onclick="window.location.href='/registro'">Ver Precio por Hora</button>
+                        <button class="btn btn-warning mt-2" onclick="window.location.href='/proveedores'">Ver Teléfono</button>
+                        <button class="btn btn-warning mt-2" onclick="window.location.href='/proveedores'">Ver Precio por Hora</button>
                     </div>
                     <div class="card-footer">
                         <small class="text-body-secondary">Hace 1 año en OffAPP</small>
                     </div>
                 </div>
-                <div class="card mx-1">
+                <div class="card mx-1 text-bg-success">
                     <img
                         src="https://aprende.com/wp-content/uploads/2022/01/funciones-del-plomero.jpg"
                         class="card-img-top"
@@ -99,8 +95,8 @@
                             familiar. El conocimiento de 4 generaciones de plomeros a tu
                             disposición.
                         </p>
-                        <button class="btn btn-primary mt-2" onclick="window.location.href='/registro'">Ver Teléfono</button>
-                        <button class="btn btn-primary mt-2" onclick="window.location.href='/registro'">Ver Precio por Hora</button>
+                        <button class="btn btn-warning mt-2" onclick="window.location.href='/proveedores'">Ver Teléfono</button>
+                        <button class="btn btn-warning mt-2" onclick="window.location.href='/proveedores'">Ver Precio por Hora</button>
                     </div>
                     <div class="card-footer">
                         <small class="text-body-secondary">Hace 2 años en OffAPP</small>
@@ -110,7 +106,7 @@
         </section>
 
         <div class="text-center mt-4 mb-4 container-lg">
-            <a href="/login" class="btn btn-lg btn-primary w-100 "
+            <a href="/proveedores" class="btn btn-lg btn-primary w-100 "
                style="height: 60px;">Ver Lista de Proveedores</a>
         </div>
 
@@ -123,7 +119,7 @@
                  align-items: center;">
                 <h1 style="font-size: 60px;
                     color: white;
-                    margin-left: 20px;"><strong>Offapp</strong></h1>
+                    margin-left: 20px;"><strong>OffiApp</strong></h1>
             </div>
         </section>
 

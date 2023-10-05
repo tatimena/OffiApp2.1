@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -22,47 +23,43 @@ public class Calificacion {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
-    private int calificacion;
-    private double valorCalificacion;
+    private String calificacionId;
+    private int calificar;
+    
     private String comentario;
+    @OneToOne
+    private Trabajo trabajo;
     @ManyToOne
     private Usuario usuario;
+    
+   
 
 
     public Calificacion() {
     }
 
-    public Calificacion(String id, int calificacion, double valorCalificacion, String comentario, Usuario usuario) {
-        this.id = id;
-        this.calificacion = calificacion;
-        this.valorCalificacion = valorCalificacion;
+    public Calificacion(String calificacionId, int calificar, String comentario, Trabajo trabajo, Usuario usuario) {
+        this.calificacionId = calificacionId;
+        this.calificar = calificar;
         this.comentario = comentario;
+        this.trabajo = trabajo;
         this.usuario = usuario;
     }
 
-    public String getId() {
-        return id;
+    public String getCalificacionId() {
+        return calificacionId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCalificacionId(String calificacionId) {
+        this.calificacionId = calificacionId;
     }
 
-    public int getCalificacion() {
-        return calificacion;
+    public int getCalificar() {
+        return calificar;
     }
 
-    public void setCalificacion(int calificacion) {
-        this.calificacion = calificacion;
-    }
-
-    public double getValorCalificacion() {
-        return valorCalificacion;
-    }
-
-    public void setValorCalificacion(double valorCalificacion) {
-        this.valorCalificacion = valorCalificacion;
+    public void setCalificar(int calificar) {
+        this.calificar = calificar;
     }
 
     public String getComentario() {
@@ -73,6 +70,14 @@ public class Calificacion {
         this.comentario = comentario;
     }
 
+    public Trabajo getTrabajo() {
+        return trabajo;
+    }
+
+    public void setTrabajo(Trabajo trabajo) {
+        this.trabajo = trabajo;
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
@@ -80,7 +85,5 @@ public class Calificacion {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    
-    
 
  }
