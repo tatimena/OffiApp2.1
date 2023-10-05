@@ -33,6 +33,7 @@
 
                 <section id="main-section">
 
+<<<<<<< HEAD
                     <div class="container-lg mt-3">
 
                         <form th:action="@{/registrarProveedor}" method="POST" enctype="multipart/form-data"
@@ -51,6 +52,20 @@
                                     <use xlink:href="#exclamation-triangle-fill" />
                                     </svg>
                                 </div>
+=======
+              
+                    <form th:action="@{/registrarProv}" method="POST" enctype="multipart/form-data"
+                          class="container-lg">
+                        <div
+                            th:if="${error != null}"
+                            class="alert alert-danger d-flex align-items-center"
+                            role="alert"
+                            >
+                            <div class="content">
+                                <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:">
+                                <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+>>>>>>> c426d1faee5c7070eb648c50f372232c785e95e1
                             </div>
 
                             <div
@@ -65,11 +80,19 @@
                                 </div>
                             </div>
 
+<<<<<<< HEAD
                             <div class="container">
                                 <h2>Registrarse</h2>   
                                 <br>
                                 <div class="mt-3">
                                     <div><label for="nombreProv" class="form-label" >Nombre del proveedor</label></div>
+=======
+                        <div class="container">
+                            <h2>Registrarse</h2>   
+                            <br>
+                            <div class="mt-3">
+                                <div><label for="nombreUser" class="form-label" >Nombre del proveedor</label></div>
+>>>>>>> c426d1faee5c7070eb648c50f372232c785e95e1
 
                                     <div class="encabezado">
                                         <input
@@ -189,11 +212,18 @@
                                     <textarea 
                                         type="text"
                                         class="form-control"
+<<<<<<< HEAD
                                         id="descripcion" 
                                         name="descripcion" 
                                         rows="4" 
                                         cols="50">
                                     </textarea>
+=======
+                                        id="nombreUser"
+                                        name="nombreUser"
+                                        th:value="${nombreUser}"
+                                        />
+>>>>>>> c426d1faee5c7070eb648c50f372232c785e95e1
                                 </div>
 
 
