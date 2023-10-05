@@ -1,57 +1,79 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="/fragments/head :: head"></head>
-<body style="background-color: rgb(144, 12, 63); font-family: 'Urbanist', sans-serif;">
+    <head th:replace="/fragments/head :: head"></head>
+    <body style="background-color: rgb(144, 12, 63); font-family: 'Urbanist', sans-serif;">
 
-  <header class="header container">
-    <nav th:replace="/fragments/navbar :: nav"></nav>
-  </header>
+        <header class="header container">
+            <nav th:replace="/fragments/navbar :: nav"></nav>
+        </header>
 
-  <section class="main container-lg">
-    <div class="container-lg text-center">
-      <h1 class="display-4" style="color: rgb(249, 219, 187);">
-        UNA página <br />
-        TODOS los servicios
-      </h1>
-    </div>
+        <section class="main container-lg">
+            <div class="container-lg text-center">
+                <h1 class="display-4" style="color: rgb(249, 219, 187);">
+                    UNA página <br />
+                    TODOS los servicios
+                </h1>
+            </div>
 
-    <div class="profile-container container-lg" style="background-color: rgb(78, 110, 129); border-radius: 10px; padding: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+            <div class="profile-container container-lg" style="background-color: rgb(78, 110, 129); border-radius: 10px; padding: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
 
-      <div class="row  container-lg">
-        <!-- Columna de la imagen -->
-        <div class="col-md-4">
-          <div class="profile-image text-center mb-4">
-            <img th:src="@{/imagen/perfil/{id}(id=${proveedor.id})}" alt="Imagen del proveedor" class="img-fluid rounded-circle">
-          </div>
-        </div>
-        
-        <!-- Columna de la información del proveedor -->
-        <div class="col-md-8">
-          <div class="profile-info">
-            <h1 class="display-5" style="color:rgb(248, 222, 34);" th:text="${proveedor.nombreUser}"></h1>
-            <p class="lead" style="color: rgb(249, 219, 187);" th:text="${proveedor.servicio}"></p>
-          </div>
-          <div class="profile-description">
-            <p style="color: rgb(255, 255, 255);" th:text="${proveedor.descripcion}"></p>
-          </div>
-          <div class="profile-data">
-            <ul class="list-unstyled" style="color: white;">
-              <li><strong>Nombre del Proveedor:</strong> <span th:text="${proveedor.nombreUser}"></span></li>
-              <li><strong>Correo Electrónico:</strong> <span th:text="${proveedor.email}"></span></li>
-              <li><strong>Teléfono:</strong> <span th:text="${proveedor.telefono}"></span></li>
-              <li><strong>Precio por Hora:</strong> <span th:text="${proveedor.precioHora}"></span></li>
-              <!-- Agrega más detalles aquí -->
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+                <div class="row  container-lg">
+                    <!-- Columna de la imagen -->
+                    <div class="col-md-4">
+                        <div class="profile-image text-center mb-4">
+                            <img th:src="@{/imagen/perfil/{id}(id=${proveedor.id})}" alt="Imagen del proveedor" class="img-fluid rounded-circle">
+                        </div>
+                    </div>
 
-  <footer class="footer container mt-5">
-    <nav th:replace="/fragments/footer :: footer"></nav>
-  </footer>
+                    <!-- Columna de la información del proveedor -->
+                    <div class="col-md-8">
+                        <div class="profile-info">
+                            <h1 class="display-5" style="color:rgb(248, 222, 34);" th:text="${proveedor.nombreUser}"></h1>
+                            <p class="lead" style="color: rgb(249, 219, 187);" th:text="${proveedor.servicio}"></p>
+                        </div>
+                        <div class="profile-description">
+                            <p style="color: rgb(255, 255, 255);" th:text="${proveedor.descripcion}"></p>
+                        </div>
+                        <div class="profile-data">
+                            <ul class="list-unstyled" style="color: white;">
+                                <li><strong>Nombre del Proveedor:</strong> <span th:text="${proveedor.nombreUser}"></span></li>
+                                <li><strong>Correo Electrónico:</strong> <span th:text="${proveedor.email}"></span></li>
+                                <li><strong>Teléfono:</strong> <span th:text="${proveedor.telefono}"></span></li>
+                                <li><strong>Precio por Hora:</strong> <span th:text="${proveedor.precioHora}"></span></li>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-</body>
+                            </ul>
+                        </div>
+                        <div class="profile-buttons mt-3">
+                            <form method="post" action="/contratar-servicio">
+                                <!-- Otros campos de formulario -->
+                                
+                                <input type="hidden" name="descripcion" th:value="${proveedor.descripcion}">
+                                <input type="hidden" name="precioHora" th:value="${proveedor.precioHora}">
+                                <input type="hidden" name="proveedorAsignado_id" th:value="${proveedor.id}">
+                               
+                                <input type="hidden" name="estado" th:value="pendiente">
+                                <button type="submit" class="btn btn-primary">Contratar</button>
+                                   
+                            </form>
+
+                            <a th:href="@{'/' + ${proveedor.servicio.toLowerCase()}}+s"  id="volverBtn" class="btn btn-secondary">Volver</a> 
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer container mt-5">
+            <nav th:replace="/fragments/footer :: footer"></nav>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
+            document.getElementById("volverBtn").addEventListener("click", function () {
+                console.log("Botón Volver clickeado");
+
+                window.history.back();
+            });
+
+        </script>
+    </body>
 </html>

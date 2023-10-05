@@ -1,6 +1,7 @@
 package com.grupoD.offiapp.controladores;
 
 import com.grupoD.offiapp.Entidades.Calificacion;
+import com.grupoD.offiapp.Entidades.Trabajo;
 
 import com.grupoD.offiapp.Entidades.Usuario;
 
@@ -8,7 +9,9 @@ import com.grupoD.offiapp.enumeraciones.Rol;
 
 
 import com.grupoD.offiapp.excepciones.MiException;
+import com.grupoD.offiapp.repositorios.CalificacionRepositorio;
 import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
+import com.grupoD.offiapp.servicios.CalificacionServicio;
 import com.grupoD.offiapp.servicios.TrabajoServicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.util.stream.Collectors;
 import static jdk.nashorn.internal.runtime.Debug.id;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -39,9 +46,13 @@ public class PortalControlador {
     
     @Autowired
     private TrabajoServicio trabajoServicio;
+     @Autowired
+    private CalificacionServicio calificacionServicio;
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
+    @Autowired
+    private CalificacionRepositorio calificacionRepositorio;
 
     @GetMapping("/")
     public String index() throws MiException {
@@ -86,11 +97,12 @@ public class PortalControlador {
 
         try {
 
-            usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
+            Usuario proveedor= usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
           
 
             modelo.put("exito", "Usted se ha registrado correctamente");
-            return "index.html";
+            String proveedorId=proveedor.getId();
+            return "redirect:/perfilProveedor/" + proveedorId ;
         } catch (MiException ex) {
 
             // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
@@ -115,8 +127,11 @@ public class PortalControlador {
     @GetMapping("/electricistas")
 public String electricistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
+        
+        
 
-        List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
+       
 
         modelo.addAttribute("usuarios", Electricista);
 
@@ -127,7 +142,7 @@ public String electricistas(ModelMap modelo) {
 public String carpinteros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Carpintero = usuarios.stream().filter(usuario -> "Carpintero".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Carpintero = usuarios.stream().filter(usuario -> "Carpintero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Carpintero);
 
@@ -138,7 +153,7 @@ public String carpinteros(ModelMap modelo) {
 public String gasistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Gasista = usuarios.stream().filter(usuario -> "Gasista".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Gasista = usuarios.stream().filter(usuario -> "Gasista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Gasista);
 
@@ -149,7 +164,7 @@ public String gasistas(ModelMap modelo) {
 public String plomeros(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
 
-        List<Usuario> Plomero = usuarios.stream().filter(usuario -> "Plomero".equals(usuario.getServicio())).collect(Collectors.toList());
+        List<Usuario> Plomero = usuarios.stream().filter(usuario -> "Plomero".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
 
         modelo.addAttribute("usuarios", Plomero);
 
@@ -179,34 +194,11 @@ public String conocenos() {
     }
 
 
-    /*
+   
 
 
 
-    @GetMapping("/registroProveedor")
-    public String RegistroProveedor() {
-        return "registro_proveedor.html";
-    }
-
-    @PostMapping("/registrarProveedor")
-    public String RegistrarProveedor(@RequestParam MultipartFile archivo, @RequestParam String nombreProv,
-            @RequestParam String email, @RequestParam String direccion,
-            @RequestParam String password, @RequestParam String password2, @RequestParam Integer telefono, @RequestParam String servicio,
-            @RequestParam Integer precioHora, @RequestParam(required = false) String descripcion, ModelMap modelo) {
-
-        try {
-            usuarioServicio.registrarProv(archivo, nombreProv, email, password, password2, telefono, servicio, precioHora, descripcion);
-            modelo.put("exito", "Usted se ha registrado correctamente como Proveedor");
-            return "index.html";
-        } catch (MiException ex) {
-
-            // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
-            modelo.put("error", ex.getMessage());
-
-            return "registro_proveedor.html";
-        }
-    }
-}
+   
 //     @GetMapping("/perfilProveedor")
 //    public String mostrarPerfilProveedor(Model model) {
 //        // Aquí puedes agregar lógica para obtener los datos del proveedor
@@ -221,16 +213,11 @@ public String conocenos() {
 
 
     
-      @GetMapping("/perfilProveedor")
-
-    public String mostrarPerfilProveedor(Model model) {
-        // Aquí puedes agregar lógica para obtener los datos del proveedor
-        // y pasarlos al modelo para que se muestren en la vista
-        Usuario proveedor = usuarioServicio.getOne("4e5c6689-4107-470c-9fac-50161cd30b15"); // Reemplaza "ID_DEL_PROVEEDOR" por el ID del proveedor que deseas mostrar
-        model.addAttribute("proveedor", proveedor);
-        
-
-        return "perfil_Proveedor.html"; // Nombre de la vista HTML que mostrará el perfil del proveedor
+      @GetMapping("/perfilProveedor/{id}")
+      public String mostrarPerfilProveedor(@PathVariable String id, Model model) {
+      Usuario proveedor = usuarioServicio.getOne(id);
+      model.addAttribute("proveedor", proveedor);
+      return "perfil_Proveedor.html"; 
     }
 
     // Método de ejemplo para obtener calificaciones (reemplaza con tu propia lógica)
@@ -242,12 +229,12 @@ public String conocenos() {
     }
     
     @RequestMapping("/vistaTrabajoProveedor/{id}")
-    public String vistaTrabajoProveedor(String id,ModelMap modelo) {
+    public String vistaTrabajoProveedor(@RequestParam String id,ModelMap modelo) {
         
       
 
-    modelo.put("proveedor",usuarioServicio.getOne("2757dd17-f2d9-4d63-9990-c3720d754f49"));
-    modelo.put("usuario",usuarioServicio.getOne("75f63906-5de0-4229-b362-a49cd2d78c6e"));
+    modelo.put("proveedor",usuarioServicio.getOne(id));
+    modelo.put("usuario",usuarioServicio.getOne(id));
     
     return "vistaTrabajoProveedor.html";
 }
@@ -260,7 +247,7 @@ public String aceptarTrabajo(@PathVariable String trabajoId) {
     return "vistaPerfil.html";
 }
 
-/*
+
     @GetMapping("/proveedor/registro")
     public String RegistroProv() {
         return "registro_proveedor.html";
@@ -289,8 +276,11 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
 }
 @GetMapping("/calificar/{trabajoId}")
     public String mostrarPaginaCalificacion(@PathVariable String trabajoId, Model model) {
-        Trabajo trabajo = trabajoServicio.obtenerTrabajoPorId("ded7c570-c217-4ac1-9d61-ed587e9054d8");
+        Trabajo trabajo = trabajoServicio.obtenerTrabajoPorId(trabajoId);
         String proveedorId = trabajo.getProveedorAsignado_id(); 
+        
+        System.out.println("trabajoid"+trabajoId);
+        System.out.println("proveedorId"+proveedorId);
         Usuario usuario = usuarioServicio.obtenerUsuarioPorId(proveedorId);
          if (usuario != null) {
            
@@ -312,7 +302,10 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
     public String calificarTrabajo(
             @PathVariable String trabajoId,
             @RequestParam int calificar,
-            @RequestParam String comentario) {
+            @RequestParam String comentario, 
+            @RequestParam String proveedorAsignado_id,
+            @RequestParam String usuarioSolicitante_id, 
+            ModelMap modelo       ) {
         if (calificar < 1 || calificar > 5) {
             // Aquí puedes agregar manejo de error o redirigir a una página de error
             return "vistaCalificaciondeUsuario";
@@ -322,10 +315,10 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
             return "vistaCalificaciondeUsuario";
         }
 
-        // Guardar la calificación y el comentario en la base de datos o sistema de almacenamiento
-        trabajoServicio.guardarCalificacion(trabajoId, calificar, comentario);
+       
+        //calificacionServicio.guardarCalificacion(trabajo, calificar, comentario, usuario);
 
-        // Redirigir al usuario a la página de confirmación o a la lista de trabajos
+        
         return "index.html";
     }
     
@@ -344,23 +337,70 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
     
     return "index.html";
     }  */
-    
-    @PostMapping("/contratar-servicio")
-public String crearTrabajo(@ModelAttribute Trabajo trabajo, ModelMap modelo) {
-    try {
-        trabajoServicio.crearTrabajo(trabajo);
-    } catch (MiException ex) {
-        Logger.getLogger(PortalControlador.class.getName()).log(Level.SEVERE, null, ex);
-    }
+     @PostMapping("/contratar-servicio")
+    public String crearTrabajo(
+        @RequestParam("proveedorAsignado_id") String proveedorId,
+        @RequestParam("descripcion") String descripcion,
+        @RequestParam("estado") String estado,
+        ModelMap modelo) {
+        
+        // Obtener el usuario logueado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String usuarioEmail = auth.getName();
+        Usuario usuario= usuarioRepositorio.buscarPorEmail(usuarioEmail);
+        String usuarioId=usuario.getId();
+        
+        
+        // Crear un objeto Trabajo con los datos
+        Trabajo trabajo = new Trabajo();
+        trabajo.setUsuarioSolicitante_id(usuarioId);
+        trabajo.setProveedorAsignado_id(proveedorId);
+        trabajo.setDescripcion(descripcion);
+        trabajo.setEstado(estado);
+        
+        try {
+            trabajoServicio.crearTrabajo(trabajo);
+        } catch (MiException ex) {
+            Logger.getLogger(PortalControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-    return "index.html";
+        return "index.html";
+    } 
+//    @PostMapping("'/contratar-servicio")
+//public String crearTrabajo(@ModelAttribute Trabajo trabajo, ModelMap modelo) {
+//    try {
+//        trabajoServicio.crearTrabajo(trabajo);
+//    } catch (MiException ex) {
+//        Logger.getLogger(PortalControlador.class.getName()).log(Level.SEVERE, null, ex);
+//    }
+//
+//    return "index.html";
+    
+@GetMapping("/trabajos-contratados")
+public String obtenerTrabajosContratadosPorUsuario(
+    @RequestParam("usuarioSolicitante_id") String usuarioId,
+    ModelMap modelo) {
+
+    // Utiliza el ID del usuario para obtener los trabajos contratados
+    List<Trabajo> trabajos = trabajoServicio.obtenerTrabajosPorUsuario(usuarioId);
+    
+    modelo.addAttribute("trabajos", trabajos);
+
+    return "listaTrabajosSolicitados"; // Reemplaza "listaTrabajosSolicitados" con el nombre de tu vista
+}
+@PostMapping("/volver")
+      public String volverAlListado(@RequestParam ("servicio")String servicio){
+             String urlRedireccion ="/"+ servicio.toLowerCase()+"s"; // Transformamos el tipo de servicio a minúsculas
+    return "redirect:" + urlRedireccion;
+      }
+
 }
 
     
     
     
     
-}
+
 
     
 

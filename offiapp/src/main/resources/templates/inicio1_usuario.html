@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:replace="/fragments/head :: head"></head>
     <body style="background-color: rgb(22, 30, 84)">
         <header class="header container">
@@ -45,6 +45,9 @@
                 </div>
             </div>
         </div>
+            <div class="container text-center mt-4">
+        <a th:href="@{/trabajos-contratados(usuarioSolicitante_id=${session.usuariosession.id})}" class="btn btn-primary">Ver Trabajos Contratados</a>
+    </div>
         <footer class="footer container">
             <div>
                 <nav th:replace="/fragments/footer :: footer"></nav>  

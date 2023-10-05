@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -26,7 +27,8 @@ public class Calificacion {
     private int calificar;
     
     private String comentario;
-    private String trabajoId;
+    @OneToOne
+    private Trabajo trabajo;
     @ManyToOne
     private Usuario usuario;
     
@@ -36,11 +38,11 @@ public class Calificacion {
     public Calificacion() {
     }
 
-    public Calificacion(String calificacionId, int calificar, String comentario, String trabajoId, Usuario usuario) {
+    public Calificacion(String calificacionId, int calificar, String comentario, Trabajo trabajo, Usuario usuario) {
         this.calificacionId = calificacionId;
         this.calificar = calificar;
         this.comentario = comentario;
-        this.trabajoId = trabajoId;
+        this.trabajo = trabajo;
         this.usuario = usuario;
     }
 
@@ -68,12 +70,12 @@ public class Calificacion {
         this.comentario = comentario;
     }
 
-    public String getTrabajoId() {
-        return trabajoId;
+    public Trabajo getTrabajo() {
+        return trabajo;
     }
 
-    public void setTrabajoId(String trabajoId) {
-        this.trabajoId = trabajoId;
+    public void setTrabajo(Trabajo trabajo) {
+        this.trabajo = trabajo;
     }
 
     public Usuario getUsuario() {
@@ -83,7 +85,5 @@ public class Calificacion {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    
-    
 
  }

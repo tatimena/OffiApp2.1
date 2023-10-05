@@ -23,7 +23,7 @@ public class Trabajo {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String trabajoId;
-      private String estado;
+    private String estado;
     private String descripcion;
     
    
@@ -32,10 +32,6 @@ public class Trabajo {
   
     private String proveedorAsignado_id;
     
-  
-    
-
-  
     public Trabajo() {
     }
 

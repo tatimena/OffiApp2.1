@@ -1,7 +1,7 @@
 package com.grupoD.offiapp.servicios;
 
 import com.grupoD.offiapp.Entidades.Imagen;
-import com.grupoD.offiapp.Entidades.Trabajo;
+
 import com.grupoD.offiapp.Entidades.Usuario;
 import com.grupoD.offiapp.enumeraciones.Rol;
 import com.grupoD.offiapp.excepciones.MiException;
@@ -20,8 +20,11 @@ import org.springframework.stereotype.Service;
 import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -43,13 +46,14 @@ public class UsuarioServicio implements UserDetailsService {
     @Autowired
     private ImagenServicio imagenServicio;
 
-//asi tiene que estar en el thymelife
+
     @Transactional
-    public void registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
+    public Usuario registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
         
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
+        usuario.getId();
         usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
@@ -64,6 +68,7 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.USER);
         }
         usuarioRepositorio.save(usuario);
+        return usuario;
 
     }
 
@@ -92,6 +97,11 @@ public class UsuarioServicio implements UserDetailsService {
             List<GrantedAuthority> permisos = new ArrayList();
             GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
             permisos.add(p);
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+
+            HttpSession session = attr.getRequest().getSession(true);
+
+            session.setAttribute("usuariosession", usuario);
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
 
         } else {
@@ -103,7 +113,7 @@ public class UsuarioServicio implements UserDetailsService {
 
             
     @Transactional
-    public void registrarProv(MultipartFile archivo,String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+    public Usuario registrarProv(MultipartFile archivo,String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
          
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
@@ -111,6 +121,7 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
         usuario.setServicio(servicio);
+        usuario.getId();
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
         Imagen imagen = imagenServicio.guardar(archivo);
@@ -124,7 +135,7 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.PROVEEDOR);
         }
         usuarioRepositorio.save(usuario);
-
+return usuario;
     }
 
     /*
@@ -224,7 +235,7 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
 
-    /*   public List<Usuario> listarProveedores() {
+    public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = usuarioRepositorio.findAll();
         List<Usuario> proveedores = new ArrayList<>();
 

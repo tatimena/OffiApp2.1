@@ -37,7 +37,7 @@
 
                     <!--en el action va el controlador del registro de un provedor-->
 
-                    <form th:action="@{/registrarProveedor}" method="POST" enctype="multipart/form-data"
+                    <form th:action="@{registrarProv}" method="POST" enctype="multipart/form-data"
                           class="container-lg">
                         <div
                             th:if="${error != null}"
@@ -74,8 +74,8 @@
                                         type="text"
                                         class="form-control"
                                         id="nombreProv"
-                                        name="nombreProv"
-                                        th:value="${nombreProv}"
+                                        name="nombreUser"
+                                        th:value="${nombreUser}"
                                         />
                                 </div>
                             </div>

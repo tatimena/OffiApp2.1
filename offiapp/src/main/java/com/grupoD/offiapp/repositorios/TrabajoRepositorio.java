@@ -6,6 +6,7 @@ package com.grupoD.offiapp.repositorios;
 
 import com.grupoD.offiapp.Entidades.Trabajo;
 import com.grupoD.offiapp.Entidades.Usuario;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,7 @@ public interface TrabajoRepositorio extends JpaRepository<Trabajo, String> {
    
     @Query("SELECT t FROM Trabajo t WHERE t.id = :id")
     public Trabajo buscarPorid(@Param("id") String trabajoId);
+   @Query("SELECT t FROM Trabajo t WHERE t.usuarioSolicitante_id = :usuarioSolicitante_id")
+public List<Trabajo> buscarPorUsuarioSolicitanteId(@Param("usuarioSolicitante_id") String usuarioSolicitanteId);
+
 }

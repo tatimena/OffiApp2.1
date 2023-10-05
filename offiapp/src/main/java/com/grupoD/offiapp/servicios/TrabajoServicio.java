@@ -126,26 +126,24 @@ public void eliminarTrabajo(String trabajoId) throws MiException {
         }
         
     }
-   @Transactional
-public void guardarCalificacion(String trabajoId, int calificar, String comentario) {
-    Trabajo trabajo = trabajoRepositorio.findById(trabajoId).orElse(null);
-    if (trabajo != null) {
-       
-        Calificacion nuevaCalificacion = new Calificacion();
-        nuevaCalificacion.setCalificar(calificar);
-        nuevaCalificacion.setComentario(comentario);
-        
-        // Asociar la nueva calificación con el trabajo estableciendo su ID
-        nuevaCalificacion.setTrabajoId(trabajoId);
-        
-        // Guardar la calificación en la base de datos
-        calificacionRepositorio.save(nuevaCalificacion);
+ 
+public List<Trabajo> obtenerTrabajosPorUsuario(String usuarioSolicitante_id) {
+    
+    Usuario usuario = usuarioRepositorio.buscarPorid(usuarioSolicitante_id);
 
-        // Opcionalmente, puedes agregar la calificación al trabajo si tienes una relación bidireccional
-       // trabajo.getCalificacion().add(nuevaCalificacion); ser si es necesario
-        //trabajoRepositorio.save(trabajo); // Actualizar el trabajo con la nueva calificación
+    if (usuario != null) {
+       
+        String usuarioId = usuario.getId();
+        
+        return trabajoRepositorio.buscarPorUsuarioSolicitanteId(usuarioId);
+    } else {
+        // Si no se encuentra el usuario, devuelve una lista vacía o maneja el error según tus necesidades
+        return new ArrayList<>();
     }
 }
+
+
+  
 
 
 
