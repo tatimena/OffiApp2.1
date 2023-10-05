@@ -7,44 +7,61 @@
             <nav th:replace="/fragments/navbar :: nav"></nav>  
 
         </header>   
-        <div class="container-lg">
-            <h1
-                class="display-1"
+        <div class="container-lg mt-4">
+            <h2
+                class="display-1 text-center"
                 style="
-                background-color: rgb(22, 30, 84);
+                background-color: rgb(4, 28, 50);
                 color: rgb(255, 81, 81);
                 font-family: 'Urbanist', sans-serif;
+                font-weight: 900;
                 "
                 >
-                UNA página <br />
-                TODOS los servicios
-            </h1>
+                Elegí el servicio que buscas
+            </h2>
         </div>
-        <div class="container text-center">
+        <div class="container text-center" style="font-weight: 900;">
             <div class="row">
-                <!-- Configura las columnas para dispositivos medianos y grandes (PCs y tablets) -->
-                <div class="col-md-3">
-                    <button class="btn btn-primary">
-                        Botón 1
-                    </button>
+                <div class="col-md-3 mt-3">
+                    <a href="/plomeros">
+                        <div style="background-color: antiquewhite; 
+                             border-radius: 5px; 
+                             padding: 10px;">
+                            <img th:src="@{/imagen/perfil/{id}(id=${plomeria.id})}" alt="Imagen 1" style="max-width: 100%; height: auto;">
+                            <span style="display: block; margin-top: 5px; font-size: 16px; color: #333;">Plomeros</span>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-secondary">
-                        Botón 2
-                    </button>
+                <div class="col-md-3 mt-3">
+                    <a href="/electricistas">
+                        <div style="background-color: antiquewhite; border-radius: 5px; padding: 10px;">
+                            <img th:src="@{/imagen/perfil/{id}(id=${electricidad.id})}" alt="Imagen 2" style="max-width: 100%; height: auto;">
+                            <span style="display: block; margin-top: 5px; font-size: 16px; color: #333;">Electricistas</span>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-success">
-                        Botón 3
-                    </button>
+                <div class="col-md-3 mt-3">
+                    <a href="/carpinteros">
+                        <div style="background-color: antiquewhite; border-radius: 5px; padding: 10px;">
+                            <img th:src="@{/imagen/perfil/{id}(id=${gasista.id})}" alt="Imagen 3" style="max-width: 100%; height: auto;">
+                            <span style="display: block; margin-top: 5px; font-size: 16px; color: #333;">Carpinteros</span>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-danger">
-                        Botón 4
-                    </button>
+                <div class="col-md-3 mt-3">
+                    <a href="/gasistas">
+                        <div style="background-color: antiquewhite; border-radius: 5px; padding: 10px;">
+                            <img th:src="@{/imagen/perfil/{id}(id=${carpintero.id})}" alt="Imagen 4" style="max-width: 100%; height: auto;">
+                            <span style="display: block; margin-top: 5px; font-size: 16px; color: #333;">Gasistas</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
+
+
+
+
         <footer class="footer container">
             <div>
                 <nav th:replace="/fragments/footer :: footer"></nav>  

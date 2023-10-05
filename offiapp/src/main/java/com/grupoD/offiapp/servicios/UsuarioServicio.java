@@ -103,19 +103,20 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
     @Transactional
-    public void registrarProv(String nombreUser, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        /* MultipartFile archivo, */
+    public void registrarProv(String nombreUser,String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
+        
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
-
+        usuario.setDireccion(direccion);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
         usuario.setServicio(servicio);
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
-        /*  Imagen imagen = imagenServicio.guardar(archivo);
+        
+        Imagen imagen = imagenServicio.guardar(archivo);
 
-        usuario.setImagen(imagen); */
+        usuario.setImagen(imagen); 
 
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
@@ -125,25 +126,9 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setRol(Rol.PROVEEDOR);
         }
         usuarioRepositorio.save(usuario);
-
     }
 
-    /*
-    public void validar(Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        if (telefono == null) {
-            throw new MiException("Completar con el número de teléfono");
-        }
-        if (servicio == null || servicio.isEmpty()) {
-            throw new MiException("El servicio no puede estar vacío");
-        }
-        if (precioHora == null) {
-            throw new MiException("Complete con el precio de la hora a trabajar");
-        }
-        if (descripcion == null || descripcion.isEmpty()) {
-            throw new MiException("La descripción no puede estar vacía");
-        }
-    }
-     */
+
     @Transactional
     public void modificarUsuario(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
         /* MultipartFile archivo,  */

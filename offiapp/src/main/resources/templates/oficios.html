@@ -1,44 +1,58 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
 <html xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:replace="/fragments/head :: head"></head>
-    <body style="
-          background-color: rgb(42,26,94);
-          color: rgb(251, 229, 85);
-          font-family: 'Urbanist', sans-serif;
-          ">
+    <body>
 
         <header class="header container">
 
             <nav th:replace="/fragments/navbar :: nav"></nav>  
 
-        </header>  
-
-        <div class="container m-5">
-            <table class="table table-dark">
-                <thead>
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Servicio</th>
-                        <th scope="col">Precio por hora</th>
-
-                    </tr>
-                </thead> 
-                <tbody th:each="usuario : ${usuarios}">
-                    <tr>
-                        <td scope="row" th:text="${usuario.nombreUser}"></td> 
-                        <td th:text="${usuario.email}"></td>
-                        <td th:text="${usuario.servicio}"></td>  
-                        <td th:text="${usuario.precioHora}"></td>  
-                    </tr>  
-
-                </tbody>
-            </table>            
+        </header> 
+        <div class="container-lg mt-4">
+            <h2
+                class="display-1 px-4 text-center"
+                style="
+                background-color: rgb(4, 28, 50); 
+                font-weight: 900;
+                color: rgb(249, 76, 16);
+                font-family: 'Urbanist', sans-serif;
+                "
+                >
+               Proveedores
+            </h2>
         </div>
+
+        <div class="container-lg mt-4">
+            <div class="table-responsive">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Servicio</th>
+                            <th scope="col">Precio por hora</th>
+                            <th scope="col">Telefono</th>
+                        </tr>
+                    </thead> 
+                    <tbody th:each="usuario : ${usuarios}">
+                        <tr>
+                            <td scope="row" th:text="${usuario.nombreUser}"></td> 
+                            <td th:text="${usuario.email}"></td>
+                            <td th:text="${usuario.servicio}"></td>  
+                            <td>
+                                <a href="/registro" class="btn btn-secondary btn-sm">Ver Precio</a>
+                            </td>
+                            <td>
+                                <a href="/registro" class="btn btn-secondary btn-sm">Ver Teléfono</a>
+                            </td>
+                        </tr>  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
 
         <footer class="footer container">
             <div>
