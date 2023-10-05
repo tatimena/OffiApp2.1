@@ -220,11 +220,13 @@ public class PortalControlador {
     }
 
     @GetMapping("/logueado")
+
     public String Logueado(HttpSession session, Authentication authentication, ModelMap modelo) {
         Usuario plomeria = usuarioServicio.getOne("68fbfd21-0971-4c89-8b6d-53dda752d43a");
         Usuario electricidad = usuarioServicio.getOne("80b1f7a5-1db3-4dde-8b0f-09965a442fe4");
         Usuario gasista = usuarioServicio.getOne("22a80f60-db48-4216-9c87-6828fe3c2799");
         Usuario carpintero = usuarioServicio.getOne("9b1b8c6a-25ca-4360-b0b2-7c253bba69b0");
+
         modelo.addAttribute("plomeria", plomeria);
         modelo.addAttribute("electricidad", electricidad);
         modelo.addAttribute("gasista", gasista);
