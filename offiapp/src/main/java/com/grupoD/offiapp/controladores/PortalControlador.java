@@ -19,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import java.util.stream.Collectors;
+import static jdk.nashorn.internal.runtime.Debug.id;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +39,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 
 import org.springframework.ui.ModelMap;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -87,7 +96,7 @@ public class PortalControlador {
     }
 
     @GetMapping("/registroProveedor")
-    public String RegistroProveedor() { 
+    public String RegistroProveedor() {
         return "registro_proveedor.html";
     }
 
@@ -95,6 +104,9 @@ public class PortalControlador {
     public String RegistrarProv(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
 
         try {
+
+            usuarioServicio.registrarProv(nombreUser, descripcion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
+
             Usuario proveedor = usuarioServicio.registrarProv(nombreUser, descripcion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
             modelo.put("exito", "Usted se ha registrado correctamente");
             String proveedorId = proveedor.getId();
@@ -107,6 +119,43 @@ public class PortalControlador {
             return "registro_proveedor.html";
         }
 
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/modificar/{id}")
+    public String modificar(@PathVariable String id, ModelMap modelo) {
+        // Usuario usuario = usuarioServicio.getOne(id);
+        // modelo.put("usuario", usuarioServicio.getOne(id));
+
+        modelo.addAttribute("usuario", usuarioServicio.getOne(id));
+        return "modificar_prov.html";
+    }
+
+    @PostMapping("/modificado/{id}")
+    public String modificado(@PathVariable String id, MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+
+        try {
+            usuarioServicio.modificarUsuario(archivo, nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+
+            return "redirect:/proveedores";
+        } catch (MiException ex) {
+
+            modelo.put("error", ex.getMessage());
+            return "oficios.html";
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/baja/{id}")
+    public String baja(@PathVariable String id, ModelMap modelo) {
+        try {
+            usuarioServicio.darDeBaja(id);
+        } catch (MiException ex) {
+            modelo.put("error", ex.getMessage());
+            return "oficios.html";
+        }
+        return "redirect:../proveedores";
     }
 
     @GetMapping("/proveedores")
@@ -165,8 +214,7 @@ public class PortalControlador {
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam(required = false) String error, ModelMap modelo
-    ) {
+    public String login(@RequestParam(required = false) String error, ModelMap modelo) {
         if (error != null) {
             modelo.put("error", "Usuario o Contraseña inválidos");
         }
@@ -183,7 +231,6 @@ public class PortalControlador {
         modelo.addAttribute("electricidad", electricidad);
         modelo.addAttribute("gasista", gasista);
         modelo.addAttribute("carpintero", carpintero);
-
         Usuario sesionUsuario = (Usuario) session.getAttribute("usuariosession");
         if (authentication != null && authentication.isAuthenticated()) {
             modelo.addAttribute("authorization", authentication.getAuthorities());
@@ -191,12 +238,23 @@ public class PortalControlador {
         return "inicio1_usuario.html";
     }
 
-
-
     @GetMapping("/conocenos")
-
     public String conocenos() {
         return "about_us.html";
+    }
+
+    @GetMapping("/perfilProveedor")//{id} me tiene que llegar el id del usuario(@PathVariable String id) que se loguee para mostrar la info 
+    public String mostrarPerfilProveedor(ModelMap modelo, @RequestParam String id) {
+        Usuario proveedor = usuarioServicio.getOne("id");
+        modelo.addAttribute("proveedor", proveedor);
+        return "perfil_Proveedor.html";//Este es el nombre de la vista HTML (perfilProveedor.html)
+    }
+
+    @GetMapping("/perfilUsuario")
+    public String mostrarPerfilUsuario(ModelMap modelo) {
+        Usuario usuario = usuarioServicio.getOne("dbaf9501-af27-4bcd-ba84-77fe97641908");
+        modelo.addAttribute("usuario", usuario);
+        return "perfil_Usuario.html"; // Este es el nombre de la vista HTML (perfilProveedor.html)
     }
 
 //@GetMapping("/mostrar-calificacion")
@@ -221,7 +279,7 @@ public class PortalControlador {
         model.addAttribute("proveedor", proveedor);
         return "perfil_Proveedor.html";
     }
-    
+
 //    @GetMapping("/mostrar-calificacion")
 //public String mostrarCalificacion(@RequestParam String nombreUser, Model model) {
 //    
@@ -255,8 +313,6 @@ public class PortalControlador {
 //    // Devuelve la vista que mostrará la calificación y el comentario (ajusta la ruta)
 //    return "mostrar_calificacion.html"; // Reemplaza con la ruta de tu vista HTML
 //}
-
-
     // Método de ejemplo para obtener calificaciones (reemplaza con tu propia lógica)
 //    private List<Calificacion> obtenerCalificacionesProveedor() {
 //        List<Calificacion> calificaciones = new ArrayList<>();
@@ -264,7 +320,6 @@ public class PortalControlador {
 //        // Agrega más calificaciones
 //        return calificaciones;
 //    }
-
     @RequestMapping("/vistaTrabajoProveedor/{id}")
     public String vistaTrabajoProveedor(@RequestParam String id, ModelMap modelo) {
 
@@ -293,6 +348,8 @@ public class PortalControlador {
         return "vistaPerfil.html";
     }
 
+   
+
     @GetMapping("/marcarPendiente/{trabajoId}")// Redirige a la página adecuada
     public String marcarPendiente(@PathVariable String trabajoId) {
         trabajoServicio.cambiarEstado(trabajoId, "Pendiente");
@@ -307,22 +364,25 @@ public class PortalControlador {
         return "vistaPerfil.html";
     }
 
+   
+
+    
+
     @GetMapping("/calificar/{trabajoId}")
     public String mostrarPaginaCalificacion(@PathVariable String trabajoId, Model model) {
         Trabajo trabajo = trabajoServicio.obtenerTrabajoPorId(trabajoId);
         String proveedorId = trabajo.getProveedorAsignado_id();
-        String usuarioId= trabajo.getUsuarioSolicitante_id();
-        Usuario nombreUser= usuarioServicio.obtenerUsuarioPorId(usuarioId);
-        Usuario nombreProv= usuarioServicio.obtenerUsuarioPorId(proveedorId);
-        String nombreProve=nombreProv.getNombreUser();
-        String nombreUsuarie=nombreUser.getNombreUser();
-        
+        String usuarioId = trabajo.getUsuarioSolicitante_id();
+        Usuario nombreUser = usuarioServicio.obtenerUsuarioPorId(usuarioId);
+        Usuario nombreProv = usuarioServicio.obtenerUsuarioPorId(proveedorId);
+        String nombreProve = nombreProv.getNombreUser();
+        String nombreUsuarie = nombreUser.getNombreUser();
 
         System.out.println("trabajoid" + trabajoId);
-        System.out.println("usuarioId"+ usuarioId);
+        System.out.println("usuarioId" + usuarioId);
         System.out.println("proveedorId" + proveedorId);
         Usuario usuario = usuarioServicio.obtenerUsuarioPorId(proveedorId);
-        
+
         if (usuario != null) {
             model.addAttribute("usuarioSolicitanteId", nombreProve);
             model.addAttribute("usuarioSolicitante_id", nombreUsuarie);
@@ -333,14 +393,14 @@ public class PortalControlador {
 
             return "vistaCalificaciondeUsuario";
         } else {
-           
+
             return "error";
         }
 
         //  model.addAttribute("trabajo", trabajo);
         //return "vistaCalificaciondeUsuario.html";
     }
-    
+
     @PostMapping("/calificar/{trabajoId}")
     public String calificarTrabajo(
             @PathVariable String trabajoId,
@@ -377,7 +437,6 @@ public class PortalControlador {
     
     return "index.html";
     }  */
-    
     @PostMapping("/contratar-servicio")
     public String crearTrabajo(
             @RequestParam("proveedorAsignado_id") String proveedorId,

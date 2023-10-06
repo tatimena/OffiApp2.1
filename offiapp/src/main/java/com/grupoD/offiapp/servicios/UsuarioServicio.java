@@ -26,6 +26,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.ui.ModelMap;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UsuarioServicio implements UserDetailsService {
@@ -46,10 +49,9 @@ public class UsuarioServicio implements UserDetailsService {
     @Autowired
     private ImagenServicio imagenServicio;
 
-
     @Transactional
     public Usuario registrarUs(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio) throws MiException {
-        
+
         validar(nombreUser, direccion, email, password, password2);
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
@@ -63,7 +65,7 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (nombreUser.equals("Admin")) {
-            usuario.setRol(Rol.ADMIN);  
+            usuario.setRol(Rol.ADMIN);
         } else {
             usuario.setRol(Rol.USER);
         }
@@ -96,15 +98,13 @@ public class UsuarioServicio implements UserDetailsService {
         if (usuario != null) {
             List<GrantedAuthority> permisos = new ArrayList();
             GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
-           ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+
             HttpSession session = attr.getRequest().getSession(true);
-            
+
             session.setAttribute("usuariosession", usuario);
             permisos.add(p);
-          
 
-          
             return new User(usuario.getEmail(), usuario.getContrasenia(), permisos);
 
         } else {
@@ -113,13 +113,8 @@ public class UsuarioServicio implements UserDetailsService {
 
     }
 
-
-            
     @Transactional
-     public Usuario registrarProv(String nombreUser,String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
-        
-
-
+    public Usuario registrarProv(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
         usuario.setDireccion(direccion);
@@ -129,14 +124,8 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.getId();
         usuario.setPrecioHora(precioHora);
         usuario.setDescripcion(descripcion);
-
-        
         Imagen imagen = imagenServicio.guardar(archivo);
-
-        usuario.setImagen(imagen); 
-
-
-        usuario.setImagen(imagen); 
+        usuario.setImagen(imagen);
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Rol.USER);
         if (servicio.isEmpty()) {
@@ -146,24 +135,18 @@ public class UsuarioServicio implements UserDetailsService {
         }
         usuarioRepositorio.save(usuario);
 
-       return usuario;
+        return usuario;
     }
 
-
- public Usuario obtenerUsuarioPorNombre(String nombreUsuario) {
-       
+    public Usuario obtenerUsuarioPorNombre(String nombreUsuario) {
 
         return usuarioRepositorio.buscarPorNombre(nombreUsuario);
     }
 
-
-    
-
-
-
     @Transactional
+
     public void modificarUsuario(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        
+
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
         Usuario usuario = usuarioRepositorio.buscarPorEmail(email);
@@ -173,7 +156,7 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setNombreUser(nombreUser);
             usuario.setDireccion(direccion);
             usuario.setEmail(email);
-            usuario.setContrasenia(nombreUser);
+            usuario.setContrasenia(password);
             usuario.setTelefono(telefono);
             usuario.setServicio(servicio);
             usuario.setPrecioHora(precioHora);
@@ -238,7 +221,7 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
 
-    public List<Usuario> listarUsuarios() {
+    /* public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = usuarioRepositorio.findAll();
         List<Usuario> proveedores = new ArrayList<>();
 
@@ -251,13 +234,36 @@ public class UsuarioServicio implements UserDetailsService {
 
         return proveedores;
     }
+     */
+    public List<Usuario> listarUsuarios() {
+        List<Usuario> usuarios = usuarioRepositorio.findAll();
 
+        return usuarios;
+    }
 
-    
-    
-
-
-
-
+    //@Transactional
+//public void asignarNombresDeUsuarios(UsuarioServicio usuarioServicio, Trabajo trabajo) {
+    //if (trabajo.getUsuarioSolicitante_id() != null) {
+    //   Usuario solicitante = usuarioServicio.obtenerUsuarioPorId(trabajo.getUsuarioSolicitante_id().getId()); // Corregido aquí
+    // if (solicitante != null) {
+    //     trabajo.getUsuarioSolicitante().setNombreUser(solicitante.getNombreUser());
+    // }
+    // }
+    //if (trabajo.getProveedorAsignado() != null) {
+    // Usuario proveedor = usuarioServicio.obtenerUsuarioPorId(trabajo.getProveedorAsignado().getId());
+    // if (proveedor != null) {
+    //     trabajo.getProveedorAsignado().setNombreUser(proveedor.getNombreUser());
+    //}
+    // }
+//}
+    @Transactional
+    public void darDeBaja(String id) throws MiException {
+        getOne(id);
+        Optional<Usuario> respN = usuarioRepositorio.findById(id);
+        if (respN.isPresent()) {
+            Usuario usuario = respN.get();
+            usuarioRepositorio.delete(usuario);
+        }
+    }
 
 }
