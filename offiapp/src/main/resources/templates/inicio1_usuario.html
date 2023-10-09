@@ -20,13 +20,25 @@
                 Elegí el servicio que buscas
             </h2>
         </div>
+
+        <div th:if="${rol == 'administrador'}">
+            <p>Bienvenido, administrador.</p>
+            <div class="col-md-3 mt-3">
+                <a href="/proveedores">
+                    <div style="background-color: antiquewhite; border-radius: 5px; padding: 10px;">
+                        <span style="display: block; margin-top: 5px; font-size: 16px; color: #333;">Vea aquí los proveedores registrados</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
         <div class="container text-center" style="font-weight: 900;">
             <div class="row">
 
                 <div class="col-md-3 mt-3">
                     <a href="/plomeros">
-                        <div style="background-color: antiquewhite; 
-                             border-radius: 5px; 
+                        <div style="background-color: antiquewhite;
+                             border-radius: 5px;
                              padding: 10px;">
                             <img th:src="@{/imagen/perfil/{id}(id=${plomeria.id})}" alt="Imagen 1" style="max-width: 100%; height: auto;">
                             <span style="display: block; margin-top: 5px; font-size: 16px; color: #333;">Plomeros</span>
@@ -60,9 +72,9 @@
             </div>
         </div>
 
-            <div class="container text-center mt-4">
-        <a th:href="@{/trabajos-contratados(usuarioSolicitante_id=${session.usuariosession.id})}" class="btn btn-primary">Ver Trabajos Contratados</a>
-    </div>
+        <div class="container text-center mt-4">
+            <a th:href="@{/trabajos-contratados(usuarioSolicitante_id=${session.usuariosession.id})}" class="btn btn-primary">Ver Trabajos Contratados</a>
+        </div>
 
         <footer class="footer container">
             <div>

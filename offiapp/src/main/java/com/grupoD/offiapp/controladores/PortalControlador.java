@@ -17,7 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -30,8 +34,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.ui.Model;
@@ -99,15 +107,15 @@ public class PortalControlador {
     }
 
     @PostMapping("/registrarProv")
-    public String RegistrarProv(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+    public String RegistrarProv(@PathVariable String id, @RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
 
         try {
 
             //  usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
-            Usuario proveedor = usuarioServicio.registrarProv(nombreUser, descripcion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
+            Usuario proveedor = usuarioServicio.registrarProv(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
             modelo.put("exito", "Usted se ha registrado correctamente");
             String proveedorId = proveedor.getId();
-            return "redirect:/perfilProveedor/" + proveedorId;
+            return "index.html";
         } catch (MiException ex) {
 
             // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
@@ -121,8 +129,8 @@ public class PortalControlador {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/modificar/{id}")
     public String modificar(@PathVariable String id, ModelMap modelo) {
-        // Usuario usuario = usuarioServicio.getOne(id);
-        // modelo.put("usuario", usuarioServicio.getOne(id));
+        Usuario usuario = usuarioServicio.getOne(id);
+        modelo.put("usuario", usuarioServicio.getOne(id));
 
         modelo.addAttribute("usuario", usuarioServicio.getOne(id));
         return "modificar_prov.html";
@@ -132,7 +140,7 @@ public class PortalControlador {
     public String modificado(@PathVariable String id, MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
 
         try {
-            usuarioServicio.modificarUsuario(archivo, nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+            usuarioServicio.modificarUsuario(id, archivo, nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
             return "redirect:/proveedores";
         } catch (MiException ex) {
@@ -152,7 +160,7 @@ public class PortalControlador {
             modelo.put("error", ex.getMessage());
             return "oficios.html";
         }
-        return "redirect:../proveedores";
+        return "redirect:../usuarios";
     }
 
     @GetMapping("/proveedores")
@@ -164,6 +172,34 @@ public class PortalControlador {
         modelo.addAttribute("usuarios", proveedores);
 
         return "oficios.html";
+    }
+
+  /*  @GetMapping("/usuarios")
+    public String usuarios(ModelMap modelo) {
+        List<Usuario> usuarios = usuarioServicio.listarUsuarios();
+
+        modelo.addAttribute("usuarios", usuarios);
+
+        return "lista.html";
+    }
+*/
+    @GetMapping("/usuarios")
+    public String usuarios(ModelMap modelo) {
+        List<Usuario> usuarios = usuarioServicio.listarUsuarios();
+
+        // Ordenar la lista de usuarios por tipo de rol
+        Collections.sort(usuarios, new Comparator<Usuario>() {
+            @Override
+            public int compare(Usuario usuario1, Usuario usuario2) {
+                // Supongamos que los usuarios tienen un campo "tipoRol" que es una cadena
+                // y quieres ordenar alfabéticamente por tipo de rol
+                return usuario1.getRol().compareTo(usuario2.getRol());
+            }
+        });
+
+        modelo.addAttribute("usuarios", usuarios);
+
+        return "lista.html";
     }
 
     @GetMapping("/electricistas")
@@ -221,11 +257,11 @@ public class PortalControlador {
 
     @GetMapping("/logueado")
 
-    public String Logueado(HttpSession session, Authentication authentication, ModelMap modelo) {
-        Usuario plomeria = usuarioServicio.getOne("68fbfd21-0971-4c89-8b6d-53dda752d43a");
-        Usuario electricidad = usuarioServicio.getOne("80b1f7a5-1db3-4dde-8b0f-09965a442fe4");
-        Usuario gasista = usuarioServicio.getOne("22a80f60-db48-4216-9c87-6828fe3c2799");
-        Usuario carpintero = usuarioServicio.getOne("9b1b8c6a-25ca-4360-b0b2-7c253bba69b0");
+    public String Logueado(HttpSession session, Authentication authentication, HttpServletRequest request, HttpServletResponse response, ModelMap modelo) {
+        Usuario plomeria = usuarioServicio.getOne("f9939dee-d6e6-4616-9ba4-042d1a5c8b83");
+        Usuario electricidad = usuarioServicio.getOne("ed817ba9-e8ff-472c-9565-a8b29fbe7e68");
+        Usuario gasista = usuarioServicio.getOne("3046e3dd-4a57-486d-9b38-2a3e5d205220");
+        Usuario carpintero = usuarioServicio.getOne("bc6f7108-7e0d-4e1e-bb8e-59122b062bb4");
 
         modelo.addAttribute("plomeria", plomeria);
         modelo.addAttribute("electricidad", electricidad);
@@ -233,9 +269,29 @@ public class PortalControlador {
         modelo.addAttribute("carpintero", carpintero);
 
         Usuario sesionUsuario = (Usuario) session.getAttribute("usuariosession");
-        if (authentication != null && authentication.isAuthenticated()) {
+        /*    if (authentication != null && authentication.isAuthenticated()) {
             modelo.addAttribute("authorization", authentication.getAuthorities());
         }
+        return "inicio1_usuario.html"; */
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            // Aquí puedes verificar el rol y redirigir en consecuencia
+            if (authorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                return "redirect:/usuarios"; // Redirigir a la página de administrador
+            } else if (authorities.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
+                return "inicio1_usuario.html"; // Redirigir a la página de usuario
+            } else if (authorities.contains(new SimpleGrantedAuthority("ROLE_PROVEEDOR"))) {
+                return "redirect:/perfilProveedor"; // Redirigir a la página de proveedor
+            }
+        }
+
+        // Manejar otros casos aquí
+        return "redirect:/login"; // Redirigir de nuevo a la página de inicio de sesión
+    }
+
+    @GetMapping("/listados")
+    public String listados() {
         return "inicio1_usuario.html";
     }
 
@@ -244,11 +300,11 @@ public class PortalControlador {
         return "about_us.html";
     }
 
-    @GetMapping("/perfilProveedor")//{id} me tiene que llegar el id del usuario(@PathVariable String id) que se loguee para mostrar la info 
-    public String mostrarPerfilProveedor(ModelMap modelo, @RequestParam String id) {
+    @GetMapping("/perfilProveedor/")//{id} me tiene que llegar el id del usuario(@PathVariable String id) que se loguee para mostrar la info 
+    public String mostrarPerfilProveedor(@RequestParam String id, ModelMap modelo) {
         Usuario proveedor = usuarioServicio.getOne("id");
         modelo.addAttribute("proveedor", proveedor);
-        return "perfil_Proveedor.html";//Este es el nombre de la vista HTML (perfilProveedor.html)
+        return "perfil_proveedor.html";//Este es el nombre de la vista HTML (perfilProveedor.html)
     }
 
     @GetMapping("/perfilUsuario")
@@ -433,8 +489,10 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
 
         try {
             trabajoServicio.crearTrabajo(trabajo);
+
         } catch (MiException ex) {
-            Logger.getLogger(PortalControlador.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PortalControlador.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         return "index.html";
@@ -469,5 +527,3 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
     }
 
 }
-
-
