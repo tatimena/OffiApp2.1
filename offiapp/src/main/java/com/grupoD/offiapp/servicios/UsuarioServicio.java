@@ -114,9 +114,7 @@ public class UsuarioServicio implements UserDetailsService {
     }
 
     @Transactional
-
     public Usuario registrarProv(String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, MultipartFile archivo) throws MiException {
-
         Usuario usuario = new Usuario();
         usuario.setNombreUser(nombreUser);
         usuario.setDireccion(direccion);
@@ -140,23 +138,11 @@ public class UsuarioServicio implements UserDetailsService {
         return usuario;
     }
 
-    /*
-    public void validar(Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
-        if (telefono == null) {
-            throw new MiException("Completar con el número de teléfono");
-        }
-        if (servicio == null || servicio.isEmpty()) {
-            throw new MiException("El servicio no puede estar vacío");
-        }
-        if (precioHora == null) {
-            throw new MiException("Complete con el precio de la hora a trabajar");
-        }
-        if (descripcion == null || descripcion.isEmpty()) {
-            throw new MiException("La descripción no puede estar vacía");
-        }
+    public Usuario obtenerUsuarioPorNombre(String nombreUsuario) {
+
+        return usuarioRepositorio.buscarPorNombre(nombreUsuario);
     }
-  
-     */
+
     @Transactional
 
     public void modificarUsuario(String id,MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
@@ -270,7 +256,6 @@ public class UsuarioServicio implements UserDetailsService {
     //}
     // }
 //}
-    
     @Transactional
     public void darDeBaja(String id) throws MiException {
         getOne(id);

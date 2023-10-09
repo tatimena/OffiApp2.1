@@ -24,7 +24,7 @@
                     <tr>
                         <td th:text="${trabajo.descripcion}"></td>  
                         <td th:text="${trabajo.estado}"></td>
-                        <td th:if="${trabajo.estado == 'finalizado'}">
+                        <td th:if="${trabajo.estado == 'aceptado'}">
                               <a th:href="@{/calificar/__${trabajo.trabajoId}__}" class="btn btn-secondary">
                                 Ir a perfil
                             </a>

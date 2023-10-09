@@ -34,11 +34,7 @@ public class CalificacionServicio {
     @Transactional
     public void crearCalificacion(int calificar, String comentario, Trabajo trabajo){
         
-       // Optional<Trabajo> respuesta=trabajoRepositorio.findById(trabajoId);
-        //Trabajo trabajo=new Trabajo();
-       // trabajo=respuesta.get();
-       // trabajo.getProveedorAsignado();
-        //trabajo.getUsuarioSolicitante();
+      
         Calificacion calificacion = new Calificacion();
         
         calificacion.setCalificar(0);
@@ -47,46 +43,30 @@ public class CalificacionServicio {
         
         calificacionRepositorio.save(calificacion);
         }
-//     @Transactional
-//public void guardarCalificacion(Trabajo trabajo, int calificar, String comentario, Usuario usuario) {
-//    Trabajo trabajo= 
-//    Optional<Trabajo> trabajo = trabajoRepositorio.findById(trabajo.getTrabajoId());
-//    if (trabajo != null) {
-//       
-//        Calificacion nuevaCalificacion = new Calificacion();
-//        nuevaCalificacion.setCalificar(calificar);
-//        nuevaCalificacion.setComentario(comentario);
-//        
-// 
-//        calificacionRepositorio.save(nuevaCalificacion);
+//   
 //
-//       
-//    }
-//}
 
 
     
     
     
     @Transactional
-    public void guardarCalificacion(Trabajo trabajo, int calificar, String comentario, Usuario usuario) {
-        // Verificar si el trabajo existe en la base de datos
-        Optional<Trabajo> trabajoExistente = trabajoRepositorio.findById(trabajo.getTrabajoId());
+    public void guardarCalificacion(String trabajoId, int calificar, String proveedorAsignado_id,String usuarioSolicitante_id, String comentario) {
+      
+        Optional<Trabajo> trabajoExistente = trabajoRepositorio.findById(trabajoId);
+        
         
         if (trabajoExistente.isPresent()) {
-            // Crear una nueva instancia de Calificacion
+            
             Calificacion nuevaCalificacion = new Calificacion();
             nuevaCalificacion.setCalificar(calificar);
             nuevaCalificacion.setComentario(comentario);
-          //  nuevaCalificacion.setTrabajo(trabajo.getProveedorAsignado_id());
-           // nuevaCalificacion.setUsuario(trabajo.getUsuarioSolicitante_id());
+            nuevaCalificacion.setProveedorAsignado_id(proveedorAsignado_id);
+            nuevaCalificacion.setUsuarioSolicitante_id(usuarioSolicitante_id);
             
-            // Guardar la calificación en la base de datos
-            calificacionRepositorio.save(nuevaCalificacion);
+                     calificacionRepositorio.save(nuevaCalificacion);
         } else {
-            // El trabajo no existe en la base de datos, puedes manejar este caso según tus necesidades
-            // Por ejemplo, lanzar una excepción o registrar un mensaje de error
-            // throw new TrabajoNoEncontradoException("El trabajo no se encontró en la base de datos");
+             //throw new TrabajoNoEncontradoException("El trabajo no se encontró en la base de datos");
         }
     }
 
@@ -97,5 +77,7 @@ public class CalificacionServicio {
         calificaciones = calificacionRepositorio.findAll();
         return calificaciones;
     }
+        
+        
     
 }

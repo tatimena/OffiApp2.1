@@ -25,11 +25,7 @@ public class Trabajo {
     private String trabajoId;
     private String estado;
     private String descripcion;
-    
-   
     private String usuarioSolicitante_id;
-    
-  
     private String proveedorAsignado_id;
     
     public Trabajo() {
