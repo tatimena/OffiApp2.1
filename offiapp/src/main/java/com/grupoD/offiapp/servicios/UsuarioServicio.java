@@ -145,11 +145,11 @@ public class UsuarioServicio implements UserDetailsService {
 
     @Transactional
 
-    public void modificarUsuario(MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
+    public void modificarUsuario(String id,MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion) throws MiException {
 
         validar(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
 
-        Usuario usuario = usuarioRepositorio.buscarPorEmail(email);
+        Usuario usuario = usuarioRepositorio.buscarPorid(id);
 
         if (usuario != null) {
 
