@@ -186,11 +186,11 @@ public class PortalControlador {
     }
 
     @GetMapping("/logueado")
-    public String Logueado(ModelMap modelo) {
-        Usuario plomeria = usuarioServicio.getOne("4e5c6689-4107-470c-9fac-50161cd30b15");
+    public String Logueado(ModelMap modelo) throws MiException{
+        try {Usuario plomeria = usuarioServicio.getOne("4e5c6689-4107-470c-9fac-50161cd30b15");
         Usuario electricidad = usuarioServicio.getOne("7c0693a6-12fd-451f-af66-6f2f45962b58"); 
-        Usuario gasista = usuarioServicio.getOne("e727a466-3b3d-485c-9e4f-fb19286892f2");
-        Usuario carpintero = usuarioServicio.getOne("8967b2bd-2efc-41e4-af42-ec52dbfcfd52");
+        Usuario gasista = usuarioServicio.getOne("8967b2bd-2efc-41e4-af42-ec52dbfcfd52");
+        Usuario carpintero = usuarioServicio.getOne("886bcfb1-16e5-4dbd-8e99-0b7a60380a54");
         
         modelo.addAttribute("plomeria", plomeria);
         modelo.addAttribute("electricidad", electricidad);
@@ -198,6 +198,10 @@ public class PortalControlador {
         modelo.addAttribute("carpintero", carpintero);
 
         return "inicio1_usuario.html";
+            
+        } catch (Exception e) {
+            return "loguin.html";
+        }
     }
 
     @GetMapping("/conocenos")

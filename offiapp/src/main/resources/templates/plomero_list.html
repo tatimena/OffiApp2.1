@@ -27,7 +27,7 @@
             </h2>
         </div>
 
-        <div class="container container-lg">
+        <div class="container mt-4 container-lg">
             <table class="table table-dark container-lg">
                 <thead>
                     <tr>
@@ -35,7 +35,7 @@
                         <th scope="col">Email</th>
                         <th scope="col">Servicio</th>
                         <th scope="col">Precio por hora</th>
-                        <th scope="col">Contactar</th>
+
                     </tr>
                 </thead> 
                 <tbody th:each="usuario : ${usuarios}">
@@ -44,11 +44,6 @@
                         <td th:text="${usuario.email}"></td>
                         <td th:text="${usuario.servicio}"></td>  
                         <td th:text="${usuario.precioHora}"></td>  
-                        <td  <div class="col-md-3">
-                            <a th:href="@{/electricistas}" class="btn btn-secondary">
-                                Ir a perfil
-                            </a>
-                            </div> </td>
                     </tr>  
 
                 </tbody>
