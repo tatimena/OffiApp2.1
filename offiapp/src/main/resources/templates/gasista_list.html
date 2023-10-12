@@ -42,7 +42,7 @@
                         <td th:text="${usuario.precioHora}"></td>  
                         <input type="hidden" name="usuarioSolicitante_id" th:value="${usuario.id}">
                         <td  <div class="col-md-3">
-                             <a th:href="@{/perfilProveedor}" class="btn btn-secondary">
+                             <a th:href="@{'/perfilProveedor/' + ${usuario.id}}" class="btn btn-secondary">
                                 Ir a perfil
                             </a>
                             </div> </td>

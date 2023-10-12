@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html lang="es">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>OffApp</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Urbanist&display=swap"
+            rel="stylesheet"
+            />
+        <link rel="stylesheet" type="text/css" href="estilo.css" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+            crossorigin="anonymous"
+            />
+    </head>
+
+    <body style="background-color: rgb(1, 1, 84)">
+
+        <header class="header container">
+
+            <nav th:replace="/fragments/navbar :: nav"></nav>  
+
+        </header>   
+        <main>
+            <style>
+                *{
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                article{
+                    display: flex;
+                    align-items: center;
+                    height: 100vh;
+                    padding: 0 50px;
+
+                }
+                /* Estilos para la imagen principal */
+                .perfil {
+                    background-color: #4D3C77;
+                    float: left; /* Coloca la imagen a la izquierda */
+                    width: 30%;   /* Ocupa la mitad del ancho disponible */
+                    height: 100%;
+                    border: 1px; /* Márgenes para separar las secciones */
+
+                }
+
+
+                .contenido {
+                    background-color:#A2678A;
+                    float: right;
+                    width: 70%;
+                    height: 100%;
+                    h4:border box;
+                }
+            </style>
+
+            <article>
+                <section class="perfil">
+                    <input hidden th:text="${proveedor.id}" name="id">
+                    <h4 float center><span th:text="${proveedor.nombreUser}"></span></h4>
+
+                    <div>
+                        <h4><span th:text="${proveedor.servicio}"></span></h4>
+                    </div>
+
+
+                    <div>
+                        <img th:src="@{/imagen/perfil/{id}(id=${proveedor.id})}" alt="Imagen del proveedor" width="200" height="150">
+                    </div>
+
+
+                </section>
+
+                <section class="contenido">
+                    <div><Span >Contraseña:</Span></div>
+                    <div>
+                        <h4>••••••••</h4>
+                    </div>
+
+                    <br>
+
+                    <div><Span >Correo electronico:</Span></div>
+                    <div>
+                        <h4><span th:text="${proveedor.email}"></span></h4>
+                    </div>
+
+                    <br>
+
+                    <div><Span >Telefono</Span></div>
+                    <div>
+                        <h4><span th:text="${proveedor.telefono}"></span></h4>
+                    </div>
+
+                    <br> 
+                    <div><Span >Direccion</Span></div>
+                    <div>
+                        <h4><span th:text="${proveedor.direccion}"></span></h4>
+                    </div>
+
+                    <br>
+                    <div><Span >Precio por hora</Span></div>
+                    <div>
+                        <h4><span th:text="${proveedor.precioHora}"></span></h4>
+
+                        <br>
+
+                        <div><Span >Descripcion</Span></div>
+                        <div>
+                            <h4><span th:text="${proveedor.descripcion}"></span></h4>
+                        </div>
+
+
+                        <a class="nav-link" href="/proveedor/modificar">Cambiar Datos</a> 
+                </section>
+
+            </article>
+
+            <aside>
+
+
+            </aside>
+
+        </main>
+
+        <footer class="footer container">
+            <div>
+                <nav th:replace="/fragments/footer :: footer"></nav>  
+            </div> 
+        </footer>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>

@@ -12,27 +12,47 @@ import com.grupoD.offiapp.repositorios.UsuarioRepositorio;
 import com.grupoD.offiapp.servicios.CalificacionServicio;
 import com.grupoD.offiapp.servicios.TrabajoServicio;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.grupoD.offiapp.servicios.UsuarioServicio;
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import java.util.stream.Collectors;
+import static jdk.nashorn.internal.runtime.Debug.id;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
+
+
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.ui.Model;
 
-
 import org.springframework.ui.ModelMap;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,18 +64,16 @@ public class PortalControlador {
 
     @Autowired
     private UsuarioServicio usuarioServicio;
-    
+
     @Autowired
     private TrabajoServicio trabajoServicio;
-     @Autowired
+    @Autowired
     private CalificacionServicio calificacionServicio;
-
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
     @Autowired
     private CalificacionRepositorio calificacionRepositorio;
-
 
     @GetMapping("/")
     public String index() throws MiException {
@@ -94,20 +112,16 @@ public class PortalControlador {
     }
 
     @PostMapping("/registrarProv")
-    public String RegistrarProv(@RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+    public String RegistrarProv(@PathVariable String id, @RequestParam MultipartFile archivo, @RequestParam String nombreUser, @RequestParam String direccion, @RequestParam String email, @RequestParam String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
 
         try {
 
-
-            Usuario proveedor= usuarioServicio.registrarProv(nombreUser, descripcion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
-          
-
-           
-
+            //  usuarioServicio.registrarProv(archivo, nombreUser, email, password, password2, telefono, servicio, precioHora, descripcion);
+            Usuario proveedor = usuarioServicio.registrarProv(nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion, archivo);
 
             modelo.put("exito", "Usted se ha registrado correctamente");
-            String proveedorId=proveedor.getId();
-            return "redirect:/perfilProveedor/" + proveedorId ;
+            String proveedorId = proveedor.getId();
+            return "index.html";
         } catch (MiException ex) {
 
             // Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
@@ -116,6 +130,43 @@ public class PortalControlador {
             return "registro_proveedor.html";
         }
 
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/modificar/{id}")
+    public String modificar(@PathVariable String id, ModelMap modelo) {
+        Usuario usuario = usuarioServicio.getOne(id);
+        modelo.put("usuario", usuarioServicio.getOne(id));
+
+        modelo.addAttribute("usuario", usuarioServicio.getOne(id));
+        return "modificar_prov.html";
+    }
+
+    @PostMapping("/modificado/{id}")
+    public String modificado(@PathVariable String id, MultipartFile archivo, String nombreUser, String direccion, String email, String password, String password2, Integer telefono, String servicio, Integer precioHora, String descripcion, ModelMap modelo) throws MiException {
+
+        try {
+            usuarioServicio.modificarUsuario(id, archivo, nombreUser, direccion, email, password, password2, telefono, servicio, precioHora, descripcion);
+
+            return "redirect:/proveedores";
+        } catch (MiException ex) {
+
+            modelo.put("error", ex.getMessage());
+            return "oficios.html";
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/baja/{id}")
+    public String baja(@PathVariable String id, ModelMap modelo) {
+        try {
+            usuarioServicio.darDeBaja(id);
+        } catch (MiException ex) {
+            modelo.put("error", ex.getMessage());
+            return "oficios.html";
+        }
+        return "redirect:../usuarios";
     }
 
     @GetMapping("/proveedores")
@@ -129,14 +180,39 @@ public class PortalControlador {
         return "oficios.html";
     }
 
+  /*  @GetMapping("/usuarios")
+    public String usuarios(ModelMap modelo) {
+        List<Usuario> usuarios = usuarioServicio.listarUsuarios();
+
+        modelo.addAttribute("usuarios", usuarios);
+
+        return "lista.html";
+    }
+*/
+    @GetMapping("/usuarios")
+    public String usuarios(ModelMap modelo) {
+        List<Usuario> usuarios = usuarioServicio.listarUsuarios();
+
+        // Ordenar la lista de usuarios por tipo de rol
+        Collections.sort(usuarios, new Comparator<Usuario>() {
+            @Override
+            public int compare(Usuario usuario1, Usuario usuario2) {
+                // Supongamos que los usuarios tienen un campo "tipoRol" que es una cadena
+                // y quieres ordenar alfabéticamente por tipo de rol
+                return usuario1.getRol().compareTo(usuario2.getRol());
+            }
+        });
+
+        modelo.addAttribute("usuarios", usuarios);
+
+        return "lista.html";
+    }
+
     @GetMapping("/electricistas")
     public String electricistas(ModelMap modelo) {
         List<Usuario> usuarios = usuarioServicio.listarUsuarios();
-        
-        
 
         List<Usuario> Electricista = usuarios.stream().filter(usuario -> "Electricista".equalsIgnoreCase(usuario.getServicio())).collect(Collectors.toList());
-
 
         modelo.addAttribute("usuarios", Electricista);
 
@@ -177,8 +253,7 @@ public class PortalControlador {
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam(required = false) String error, ModelMap modelo
-    ) {
+    public String login(@RequestParam(required = false) String error, ModelMap modelo) {
         if (error != null) {
             modelo.put("error", "Usuario o Contraseña inválidos");
         }
@@ -186,143 +261,215 @@ public class PortalControlador {
     }
 
     @GetMapping("/logueado")
-    public String Logueado(ModelMap modelo) throws MiException{
-        try {Usuario plomeria = usuarioServicio.getOne("4e5c6689-4107-470c-9fac-50161cd30b15");
-        Usuario electricidad = usuarioServicio.getOne("7c0693a6-12fd-451f-af66-6f2f45962b58"); 
-        Usuario gasista = usuarioServicio.getOne("8967b2bd-2efc-41e4-af42-ec52dbfcfd52");
-        Usuario carpintero = usuarioServicio.getOne("886bcfb1-16e5-4dbd-8e99-0b7a60380a54");
-        
+    public String Logueado(HttpSession session, Authentication authentication, HttpServletRequest request, HttpServletResponse response, ModelMap modelo) {
+        Usuario plomeria = usuarioServicio.getOne("f9939dee-d6e6-4616-9ba4-042d1a5c8b83");
+        Usuario electricidad = usuarioServicio.getOne("ed817ba9-e8ff-472c-9565-a8b29fbe7e68");
+        Usuario gasista = usuarioServicio.getOne("3046e3dd-4a57-486d-9b38-2a3e5d205220");
+        Usuario carpintero = usuarioServicio.getOne("bc6f7108-7e0d-4e1e-bb8e-59122b062bb4");
+
         modelo.addAttribute("plomeria", plomeria);
         modelo.addAttribute("electricidad", electricidad);
         modelo.addAttribute("gasista", gasista);
         modelo.addAttribute("carpintero", carpintero);
-
-        return "inicio1_usuario.html";
-            
-        } catch (Exception e) {
-            return "loguin.html";
+        Usuario sesionUsuario = (Usuario) session.getAttribute("usuariosession");
+        /*    if (authentication != null && authentication.isAuthenticated()) {
+            modelo.addAttribute("authorization", authentication.getAuthorities());
         }
+        return "inicio1_usuario.html"; */
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            // Aquí puedes verificar el rol y redirigir en consecuencia
+            if (authorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                return "redirect:/usuarios"; // Redirigir a la página de administrador
+            } else if (authorities.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
+                return "inicio1_usuario.html"; // Redirigir a la página de usuario
+            } else if (authorities.contains(new SimpleGrantedAuthority("ROLE_PROVEEDOR"))) {
+                return "redirect:/perfilProveedor"; // Redirigir a la página de proveedor
+            }
+        }
+
+        // Manejar otros casos aquí
+        return "redirect:/login"; // Redirigir de nuevo a la página de inicio de sesión
+    }
+
+    @GetMapping("/listados")
+    public String listados() {
+        return "inicio1_usuario.html";
+     
     }
 
     @GetMapping("/conocenos")
-
-public String conocenos() {
+    public String conocenos() {
         return "about_us.html";
     }
 
+    @GetMapping("/perfilProveedor/")//{id} me tiene que llegar el id del usuario(@PathVariable String id) que se loguee para mostrar la info 
+    public String mostrarPerfilProveedor(@RequestParam String id, ModelMap modelo) {
+        Usuario proveedor = usuarioServicio.getOne("id");
+        modelo.addAttribute("proveedor", proveedor);
+        return "perfil_proveedor.html";//Este es el nombre de la vista HTML (perfilProveedor.html)
+    }
 
-   
+    @GetMapping("/perfilUsuario")
+    public String mostrarPerfilUsuario(ModelMap modelo) {
+        Usuario usuario = usuarioServicio.getOne("dbaf9501-af27-4bcd-ba84-77fe97641908");
+        modelo.addAttribute("usuario", usuario);
+        return "perfil_Usuario.html"; // Este es el nombre de la vista HTML (perfilProveedor.html)
+    }
 
+//@GetMapping("/mostrar-calificacion")
+//public String mostrarCalificacion(String nombreUser, Model model) {
+//    Usuario usuario= usuarioServicio.obtenerUsuarioPorId(nombreUser);
+//    Trabajo trabajo=trabajoServicio.obtenerTrabajoPorId(nombreUser);
+//    trabajo.setProveedorAsignado_id(nombreUser);
+//    List <Calificacion> calificacion= calificacionServicio.obtenercalificacionPorNombre(nombreUser);
+//   
+//    String ultimoComentario = obtenerUltimoComentario(); // Reemplaza esto con la lógica real
+//    
+//    // Agrega estos datos al modelo
+//    model.addAttribute("calificacionProveedor", calificacionProveedor);
+//    model.addAttribute("ultimoComentario", ultimoComentario);
+//    
+//    // Devuelve la vista que mostrará la calificación y el comentario
+//    return "mostrar_calificacion.html"; // Reemplaza con la ruta de tu vista HTML
+//}
+    @GetMapping("/perfilProveedor/{id}")
+    public String mostrarPerfilProveedor(@PathVariable String id, Model model) {
+        Usuario proveedor = usuarioServicio.getOne(id);
+        model.addAttribute("proveedor", proveedor);
+        return "perfil_Proveedor.html";
+    }
 
-
-   
-//     @GetMapping("/perfilProveedor")
-//    public String mostrarPerfilProveedor(Model model) {
-//        // Aquí puedes agregar lógica para obtener los datos del proveedor
-//        // y pasarlos al modelo para que se muestren en la vista
-//        model.addAttribute("nombreProveedor", "Nombre del Proveedor");
-//        model.addAttribute("descripcion", "Descripción del trabajo: Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
-//        model.addAttribute("calificaciones", obtenerCalificacionesProveedor()); // Reemplaza con tu propia lógica
-//
-//        return "vistaPerfil.html"; // Este es el nombre de la vista HTML (perfilProveedor.html)
+//    @GetMapping("/mostrar-calificacion")
+//public String mostrarCalificacion(@RequestParam String nombreUser, Model model) {
+//    
+//    Usuario proveedor = usuarioServicio.obtenerUsuarioPorNombre(nombreUser);
+//    
+//  
+//    if (proveedor == null) {
+//        return "error.html"; 
 //    }
-
-
-
-    
-      @GetMapping("/perfilProveedor/{id}")
-      public String mostrarPerfilProveedor(@PathVariable String id, Model model) {
-      Usuario proveedor = usuarioServicio.getOne(id);
-      model.addAttribute("proveedor", proveedor);
-      return "perfil_Proveedor.html"; 
-    }
-
+//    
+//  
+//    Calificacion calificaciones = calificacionServicio.obtenercalificacionPorProveedor(proveedor);
+//    
+//    // Verificamos si hay calificaciones
+//    if (calificaciones.isEmpty()) {
+//        // No hay calificaciones disponibles, puedes manejarlo en la vista
+//        model.addAttribute("sinCalificaciones", true);
+//    } else {
+//        // Obtenemos la última calificación (asumiendo que las calificaciones están ordenadas)
+//        Calificacion ultimaCalificacion = calificaciones.get(calificaciones.size() - 1);
+//        // Obtenemos el comentario de la última calificación
+//        String ultimoComentario = ultimaCalificacion.getComentario();
+//        // Agregamos la calificación y el comentario al modelo
+//        model.addAttribute("calificacionProveedor", ultimaCalificacion.getPuntuacion());
+//        model.addAttribute("ultimoComentario", ultimoComentario);
+//    }
+//    
+//    // Agregamos el proveedor al modelo por si quieres mostrar más información sobre él
+//    model.addAttribute("proveedor", proveedor);
+//    
+//    // Devuelve la vista que mostrará la calificación y el comentario (ajusta la ruta)
+//    return "mostrar_calificacion.html"; // Reemplaza con la ruta de tu vista HTML
+//}
     // Método de ejemplo para obtener calificaciones (reemplaza con tu propia lógica)
-    private List<Calificacion> obtenerCalificacionesProveedor() {
-        List<Calificacion> calificaciones = new ArrayList<>();
-        // calificaciones.add(new Calificacion(5, "01/01/2023", "Excelente proveedor. Muy satisfecho con su trabajo."));
-        // Agrega más calificaciones
-        return calificaciones;
-    }
-    
+//    private List<Calificacion> obtenerCalificacionesProveedor() {
+//        List<Calificacion> calificaciones = new ArrayList<>();
+//        // calificaciones.add(new Calificacion(5, "01/01/2023", "Excelente proveedor. Muy satisfecho con su trabajo."));
+//        // Agrega más calificaciones
+//        return calificaciones;
+//    }
     @RequestMapping("/vistaTrabajoProveedor/{id}")
-    public String vistaTrabajoProveedor(@RequestParam String id,ModelMap modelo) {
-        
-      
+    public String vistaTrabajoProveedor(@RequestParam String id, ModelMap modelo) {
 
-    modelo.put("proveedor",usuarioServicio.getOne(id));
-    modelo.put("usuario",usuarioServicio.getOne(id));
-    
-    return "vistaTrabajoProveedor.html";
-}
+        modelo.put("proveedor", usuarioServicio.getOne(id));
+        modelo.put("usuario", usuarioServicio.getOne(id));
 
+        return "vistaTrabajoProveedor.html";
+    }
 
     @GetMapping("/aceptar/{trabajoId}")// Redirige a la página adecuada
-public String aceptarTrabajo(@PathVariable String trabajoId) {
-    trabajoServicio.cambiarEstado(trabajoId, "Aceptado");
-    
-    return "vistaPerfil.html";
-}
+    public String aceptarTrabajo(@PathVariable String trabajoId) {
+        trabajoServicio.cambiarEstado(trabajoId, "Aceptado");
 
+        return "vistaPerfil.html";
+    }
 
     @GetMapping("/proveedor/registro")
     public String RegistroProv() {
         return "registro_proveedor.html";
     }
 
+    @GetMapping("/rechazar/{trabajoId}")// Redirige a la página adecuada
+    public String rechazarTrabajo(@PathVariable String trabajoId) {
+        trabajoServicio.cambiarEstado(trabajoId, "Rechazado");
 
-@GetMapping("/rechazar/{trabajoId}")// Redirige a la página adecuada
-public String rechazarTrabajo(@PathVariable String trabajoId) {
-    trabajoServicio.cambiarEstado(trabajoId, "Rechazado");
-    
-    return "vistaPerfil.html";
-}
-
-@GetMapping("/marcarPendiente/{trabajoId}")// Redirige a la página adecuada
-public String marcarPendiente(@PathVariable String trabajoId) {
-    trabajoServicio.cambiarEstado(trabajoId, "Pendiente");
-    
-    return "vistaPerfil.html";
-}
-
-@GetMapping("/marcarFinalizado/{trabajoId}") // Redirige a la página adecuada
-public String marcarFinalizado(@PathVariable String trabajoId) {
-    trabajoServicio.cambiarEstado(trabajoId, "Finalizado");
-   
-    return "vistaPerfil.html";
-}
-@GetMapping("/calificar/{trabajoId}")
-    public String mostrarPaginaCalificacion(@PathVariable String trabajoId, Model model) {
-        Trabajo trabajo = trabajoServicio.obtenerTrabajoPorId(trabajoId);
-        String proveedorId = trabajo.getProveedorAsignado_id(); 
-        
-        System.out.println("trabajoid"+trabajoId);
-        System.out.println("proveedorId"+proveedorId);
-        Usuario usuario = usuarioServicio.obtenerUsuarioPorId(proveedorId);
-         if (usuario != null) {
-           
-            model.addAttribute("trabajo", trabajo);
-            model.addAttribute("nombreProveedor", usuario.getNombreUser());
-            
-            return "vistaCalificaciondeUsuario";
-        } else {
-            // Manejo de error si el proveedor no se encuentra
-            return "error"; // Debes definir una página de error adecuada
-        }
-
-      //  model.addAttribute("trabajo", trabajo);
-        //return "vistaCalificaciondeUsuario.html";
+        return "vistaPerfil.html";
     }
 
+   
+
+    @GetMapping("/marcarPendiente/{trabajoId}")// Redirige a la página adecuada
+    public String marcarPendiente(@PathVariable String trabajoId) {
+        trabajoServicio.cambiarEstado(trabajoId, "Pendiente");
+
+        return "vistaPerfil.html";
+    }
+
+    @GetMapping("/marcarFinalizado/{trabajoId}") // Redirige a la página adecuada
+    public String marcarFinalizado(@PathVariable String trabajoId) {
+        trabajoServicio.cambiarEstado(trabajoId, "Finalizado");
+
+        return "vistaPerfil.html";
+    }
+
+   
+
+    
+
+    @GetMapping("/calificar/{trabajoId}")
+    public String mostrarPaginaCalificacion(@PathVariable String trabajoId, Model model) {
+        Trabajo trabajo = trabajoServicio.obtenerTrabajoPorId(trabajoId);
+        String proveedorId = trabajo.getProveedorAsignado_id();
+        String usuarioId = trabajo.getUsuarioSolicitante_id();
+        Usuario nombreUser = usuarioServicio.obtenerUsuarioPorId(usuarioId);
+        Usuario nombreProv = usuarioServicio.obtenerUsuarioPorId(proveedorId);
+        String nombreProve = nombreProv.getNombreUser();
+        String nombreUsuarie = nombreUser.getNombreUser();
+
+        System.out.println("trabajoid" + trabajoId);
+        System.out.println("usuarioId" + usuarioId);
+        System.out.println("proveedorId" + proveedorId);
+        Usuario usuario = usuarioServicio.obtenerUsuarioPorId(proveedorId);
+
+        if (usuario != null) {
+            model.addAttribute("usuarioSolicitanteId", nombreProve);
+            model.addAttribute("usuarioSolicitante_id", nombreUsuarie);
+            model.addAttribute("proveedorAsignado_id", nombreProve);
+
+            model.addAttribute("trabajo", trabajo);
+            model.addAttribute("nombreUsuario", nombreUsuarie);
+
+            return "vistaCalificaciondeUsuario";
+        } else {
+
+            return "error";
+        }
+
+        //  model.addAttribute("trabajo", trabajo);
+        //return "vistaCalificaciondeUsuario.html";
+    }
 
     @PostMapping("/calificar/{trabajoId}")
     public String calificarTrabajo(
             @PathVariable String trabajoId,
             @RequestParam int calificar,
-            @RequestParam String comentario, 
+            @RequestParam String comentario,
             @RequestParam String proveedorAsignado_id,
-            @RequestParam String usuarioSolicitante_id, 
-            ModelMap modelo       ) {
+            @RequestParam String usuarioSolicitante_id,
+            ModelMap modelo) {
         if (calificar < 1 || calificar > 5) {
             // Aquí puedes agregar manejo de error o redirigir a una página de error
             return "vistaCalificaciondeUsuario";
@@ -332,13 +479,10 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
             return "vistaCalificaciondeUsuario";
         }
 
-       
-        //calificacionServicio.guardarCalificacion(trabajo, calificar, comentario, usuario);
-
-        
+        calificacionServicio.guardarCalificacion(trabajoId, calificar, proveedorAsignado_id, usuarioSolicitante_id, comentario);
         return "index.html";
     }
-    
+
     /* @PostMapping("/contratar-servicio")
     public String crearTrabajo(  @RequestParam("nombre") String nombre,
         @RequestParam("descripcion") String descripcion,
@@ -354,35 +498,36 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
     
     return "index.html";
     }  */
-     @PostMapping("/contratar-servicio")
+    @PostMapping("/contratar-servicio")
     public String crearTrabajo(
-        @RequestParam("proveedorAsignado_id") String proveedorId,
-        @RequestParam("descripcion") String descripcion,
-        @RequestParam("estado") String estado,
-        ModelMap modelo) {
-        
+            @RequestParam("proveedorAsignado_id") String proveedorId,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("estado") String estado,
+            ModelMap modelo) {
+
         // Obtener el usuario logueado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String usuarioEmail = auth.getName();
-        Usuario usuario= usuarioRepositorio.buscarPorEmail(usuarioEmail);
-        String usuarioId=usuario.getId();
-        
-        
+        Usuario usuario = usuarioRepositorio.buscarPorEmail(usuarioEmail);
+        String usuarioId = usuario.getId();
+
         // Crear un objeto Trabajo con los datos
         Trabajo trabajo = new Trabajo();
         trabajo.setUsuarioSolicitante_id(usuarioId);
         trabajo.setProveedorAsignado_id(proveedorId);
         trabajo.setDescripcion(descripcion);
         trabajo.setEstado(estado);
-        
+
         try {
             trabajoServicio.crearTrabajo(trabajo);
+
         } catch (MiException ex) {
-            Logger.getLogger(PortalControlador.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PortalControlador.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         return "index.html";
-    } 
+    }
 //    @PostMapping("'/contratar-servicio")
 //public String crearTrabajo(@ModelAttribute Trabajo trabajo, ModelMap modelo) {
 //    try {
@@ -392,35 +537,24 @@ public String marcarFinalizado(@PathVariable String trabajoId) {
 //    }
 //
 //    return "index.html";
-    
-@GetMapping("/trabajos-contratados")
-public String obtenerTrabajosContratadosPorUsuario(
-    @RequestParam("usuarioSolicitante_id") String usuarioId,
-    ModelMap modelo) {
 
-    // Utiliza el ID del usuario para obtener los trabajos contratados
-    List<Trabajo> trabajos = trabajoServicio.obtenerTrabajosPorUsuario(usuarioId);
-    
-    modelo.addAttribute("trabajos", trabajos);
+    @GetMapping("/trabajos-contratados")
+    public String obtenerTrabajosContratadosPorUsuario(
+            @RequestParam("usuarioSolicitante_id") String usuarioId,
+            ModelMap modelo) {
 
-    return "listaTrabajosSolicitados"; // Reemplaza "listaTrabajosSolicitados" con el nombre de tu vista
+        // Utiliza el ID del usuario para obtener los trabajos contratados
+        List<Trabajo> trabajos = trabajoServicio.obtenerTrabajosPorUsuario(usuarioId);
+
+        modelo.addAttribute("trabajos", trabajos);
+
+        return "listaTrabajosSolicitados"; // Reemplaza "listaTrabajosSolicitados" con el nombre de tu vista
+    }
+
+    @PostMapping("/volver")
+    public String volverAlListado(@RequestParam("servicio") String servicio) {
+        String urlRedireccion = "/" + servicio.toLowerCase() + "s"; // Transformamos el tipo de servicio a minúsculas
+        return "redirect:" + urlRedireccion;
+    }
+
 }
-@PostMapping("/volver")
-      public String volverAlListado(@RequestParam ("servicio")String servicio){
-             String urlRedireccion ="/"+ servicio.toLowerCase()+"s"; // Transformamos el tipo de servicio a minúsculas
-    return "redirect:" + urlRedireccion;
-      }
-
-}
-
-    
-    
-    
-    
-
-
-    
-
-
-
-

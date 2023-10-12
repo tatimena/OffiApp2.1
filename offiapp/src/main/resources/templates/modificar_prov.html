@@ -1,11 +1,15 @@
 <!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns: sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:replace="/fragments/head :: head"></head>
     <body style="
           background-color: rgb(42, 26, 94);
           color: rgb(251, 229, 85);
           font-family: 'Urbanist', sans-serif;
-            
           ">
 
         <header class="header container">
@@ -32,67 +36,30 @@
                     </h2>
                 </div>
 
-
                 <section id="main-section">
 
-              
-                    <form th:action="@{/registrarProv}" method="POST" enctype="multipart/form-data"
-                          class="container-lg">
-                        <div
-                            th:if="${error != null}"
-                            class="alert alert-danger d-flex align-items-center"
-                            role="alert"
-                            >
-                            <div class="content">
-                                <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:">
-                                <use xlink:href="#exclamation-triangle-fill" />
-                                </svg>
-                            </div>
-                        </div>
-
-                        <div
-                            th:if="${exito != null}"
-                            class="alert alert-success d-flex align-items-center"
-                            role="alert"
-                            >
-                            <div class="content">
-                                <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:">
-                                <use xlink:href="#check-circle-fill" />
-                                </svg>
-                            </div>
-                        </div>
+                    <form th:action="@{'/modificado/' + ${usuario.id}}" method="POST" enctype="multipart/form-data" class="container-lg">
 
 
+                        <input hidden th:if="${usuario != null}" th:value="${usuario.id}" name="id">
                         <div class="container">
-                            <h2>Registrarse</h2>   
+                            <h2>Modificar datos</h2>   
                             <br>
+
                             <div class="mt-3">
                                 <div><label for="nombreUser" class="form-label" >Nombre del proveedor</label></div>
-
                                 <div class="encabezado">
                                     <input
                                         type="text"
                                         class="form-control"
                                         id="nombreUser"
                                         name="nombreUser"
-                                        th:value="${nombreUser}"
+                                        th:value="${usuario.nombreUser}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
-                            <div class="mt-3">
-                                <div><label for="direccion" class="form-label" >Direccion</label></div>
 
-
-                                <div class="encabezado">
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="direccion"
-                                        name="direccion"
-                                        th:value="${direccion}"
-                                        />
-                                </div>
-                            </div>
                             <div class="mt-3">
                                 <div><label for="email" class="form-label" >Direccion de correo electronico</label></div>
 
@@ -101,9 +68,9 @@
                                         type="text"
                                         class="form-control"
                                         id="email"
-
                                         name="email"
-                                        th:value="${email}"
+                                        th:value="${usuario.email}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
@@ -118,7 +85,8 @@
                                         class="form-control"
                                         id="password"
                                         name="password"
-                                        th:value="${password}"
+                                        th:value="${usuario.contrasenia}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
@@ -132,7 +100,8 @@
                                         class="form-control"
                                         id="password2"
                                         name="password2"
-                                        th:value="${password2}"
+                                        th:value="${usuario.contrasenia}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
@@ -147,7 +116,8 @@
                                         class="form-control"
                                         id="telefono"
                                         name="telefono"
-                                        th:value="${telefono}"
+                                        th:value="${usuario.telefono}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
@@ -162,7 +132,8 @@
                                         class="form-control"
                                         id="servicio"
                                         name="servicio"
-                                        th:value="${servicio}"
+                                        th:value="${usuario.servicio}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
@@ -177,42 +148,34 @@
                                         class="form-control"
                                         id="precioHora"
                                         name="precioHora"
-                                        th:value="${precioHora}"
+                                        th:value="${usuario.precioHora}"
+                                        pattern="\d{4}-\d{2}-\d{2}"required
                                         />
                                 </div>
                             </div>
                             <br>
-                            <div> <label for="descripcion" class="form-label mt-2"></label>Descripcion de su trabajo:</label></div>
-                            <div class="encabezado">
-                                <textarea 
-                                    type="text"
-                                    class="form-control"
-                                    id="descripcion" 
-                                    name="descripcion" 
-                                    rows="4" 
-                                    cols="50">
-                                </textarea>
-                            </div>
-
-
 
                             <div> <label for="archivo" class="form-label mt-4">Imagen de perfil</label></div>
                             <input name="archivo" type="file" id="archivo">
                         </div>
 
-
-
-
-                        <div class="registrar mt-4">
-                            <button class="btn btn-primary link volverr" type="submit">REGISTRARME</button>  
-                            <br>
+                        <div>
+                            <img th:src="@{/imagen/perfil/{id}(id=${usuario.id})}" alt="Imagen del proveedor" width="200" height="150">
                         </div>
+
+                        <a href="/proveedores" class="link">
+                            <button id="modificarButton" class="btn btn-primary" type="submit">Modificar</button>
+                        </a>
+
                         </div>
                     </form>
 
+                    <a href="/proveedores" class="link">
+                        <button  class="btn btn-primary">Volver</button>
+                    </a>
+
                 </section>
                 <br>
-
                 <section>
                     <div class="container-lg">
                         <img
@@ -233,6 +196,51 @@
                     crossorigin="anonymous"
                 ></script>
 
-                </body>
-</html>
+                <script>
+                    document.getElementById("modificarButton").addEventListener("click", function () {
+                        // Obtener el valor del campo oculto 'userId'
+                        const userId = document.getElementById("userId").value;
+                        // Obtener los datos modificados del formulario
+                        const nuevoNombre = document.getElementById("nombreUser").value;
+                        const nuevoEmail = document.getElementById("email").value;
+                        const nuevaContrasenia = document.getElementById("contrasenia").value;
+                        const nuevoTelefono = document.getElementById("telefono").value;
+                        const nuevoServicio = document.getElementById("servicio").value;
+                        const nuevoPrecio = document.getElementById("precioHora").value;
+                        const nuevaImagen = document.getElementById("archivo").value;
+                        // ... Más código para obtener otros datos modificados ...
 
+                        // Realizar una solicitud AJAX para actualizar los datos en el servidor
+                        // y manejar la respuesta del servidor aquí.
+
+                        // Por ejemplo, puedes usar fetch para enviar una solicitud POST al servidor.
+                        fetch('/modificado/' + userId, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                id: userId,
+                                nombreUser: nuevoNombre,
+                                email: nuevoEmail,
+                                contrasenia: nuevaContrasenia,
+                                telefono: nuevoTelefono,
+                                servicio: nuevoServicio,
+                                precioHora: nuevoPrecio,
+                                archivo: nuevaImagen
+                                        // ... Incluye otros datos que necesites actualizar ...
+                            }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Manejar la respuesta del servidor y actualizar la interfaz de usuario
+                                    // con los nuevos datos si es necesario.
+                                })
+                                .catch(error => {
+                                    console.error('Error al actualizar los datos:', error);
+                                });
+                    });
+                </script>
+
+                </body>
+                </html>

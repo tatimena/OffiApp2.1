@@ -23,14 +23,15 @@ public class Calificacion {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String calificacionId;
+    private String Id;
     private int calificar;
-    
+    private String proveedorAsignado_id;
+    private String usuarioSolicitante_id;
     private String comentario;
     @OneToOne
     private Trabajo trabajo;
-    @ManyToOne
-    private Usuario usuario;
+   // @ManyToOne
+   // private Usuario usuario;
     
    
 
@@ -38,20 +39,21 @@ public class Calificacion {
     public Calificacion() {
     }
 
-    public Calificacion(String calificacionId, int calificar, String comentario, Trabajo trabajo, Usuario usuario) {
-        this.calificacionId = calificacionId;
+    public Calificacion(String Id, int calificar, String proveedorAsignado_id, String usuarioSolicitante_id, String comentario, Trabajo trabajo) {
+        this.Id = Id;
         this.calificar = calificar;
+        this.proveedorAsignado_id = proveedorAsignado_id;
+        this.usuarioSolicitante_id = usuarioSolicitante_id;
         this.comentario = comentario;
         this.trabajo = trabajo;
-        this.usuario = usuario;
     }
 
-    public String getCalificacionId() {
-        return calificacionId;
+    public String getId() {
+        return Id;
     }
 
-    public void setCalificacionId(String calificacionId) {
-        this.calificacionId = calificacionId;
+    public void setId(String Id) {
+        this.Id = Id;
     }
 
     public int getCalificar() {
@@ -60,6 +62,22 @@ public class Calificacion {
 
     public void setCalificar(int calificar) {
         this.calificar = calificar;
+    }
+
+    public String getProveedorAsignado_id() {
+        return proveedorAsignado_id;
+    }
+
+    public void setProveedorAsignado_id(String proveedorAsignado_id) {
+        this.proveedorAsignado_id = proveedorAsignado_id;
+    }
+
+    public String getUsuarioSolicitante_id() {
+        return usuarioSolicitante_id;
+    }
+
+    public void setUsuarioSolicitante_id(String usuarioSolicitante_id) {
+        this.usuarioSolicitante_id = usuarioSolicitante_id;
     }
 
     public String getComentario() {
@@ -77,13 +95,6 @@ public class Calificacion {
     public void setTrabajo(Trabajo trabajo) {
         this.trabajo = trabajo;
     }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+    
 
  }

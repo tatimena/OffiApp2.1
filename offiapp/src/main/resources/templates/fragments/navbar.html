@@ -1,4 +1,3 @@
-
 <nav th:fragment="navbar" class="navbar navbar-expand-lg"
      style="color: aliceblue; background-color: rgb(255, 155, 106)"
      >
@@ -16,11 +15,21 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav ml-auto">               
-                <a class="nav-link" href="/login" ><strong>Iniciar sesión</strong></a>
-                <a class="nav-link" href="/registro"><strong>Registro de Usuarios</strong></a>
-                <a class="nav-link" href="/registroProveedor"><strong>Registro de Proveedores</strong></a>
-                <a class="nav-link" href="/conocenos"><strong>Sobre nosotros</strong></a>
+
+
+
+            <div class="navbar-nav ml-auto">
+
+
+                <a class="nav-link" th:href="@{/}" ><strong>Inicio</strong></a>
+                <a class="nav-link" href="/login" th:if="${session.usuariosession == null}" th:href="@{/login}" ><strong>Iniciar sesión</strong></a>
+                <a class="nav-link" href="/registrarUs"th:if="${session.usuariosession == null}" th:href="@{/registro}"><strong>Registro de Usuarios</strong></a>
+                <a class="nav-link" href="/registrarProv"th:if="${session.usuariosession == null}" th:href="@{/registroProveedor}"><strong>Registro de Proveedores</strong></a>
+                <a class="nav-link" href="/logueado" sec:authorize="hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')" ><strong>Lista de Proveedores</strong></a>
+                <a class="nav-link" href="/conocenos"th:href="@{/conocenos}"><strong>Sobre nosotros</strong></a>
+                <a class="nav-link" th:if="${session.usuariosession != null}" th:href="@{/logout}" role="button"><strong>Cerrar sesión <i class="icofont-login"></i></strong></a>    
+
+
             </div>
         </div>
 
